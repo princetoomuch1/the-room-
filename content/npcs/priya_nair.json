@@ -1,0 +1,19 @@
+{
+  "id": "priya_nair",
+  "name": "Priya Nair",
+  "archetype": "frightened_yes",
+  "contacts": [
+    "meera_rao"
+  ],
+  "traits": {
+    "fear": 70,
+    "A": 75,
+    "N": 70,
+    "trust": 45,
+    "fear_threshold": 25,
+    "comprehension": 70,
+    "liberty": 30,
+    "cautiousness": 70
+  },
+  "soul_sheet": "docs/02_soul_sheets.md"
+}

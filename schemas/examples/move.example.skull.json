@@ -1,0 +1,22 @@
+{
+  "id": "k2c",
+  "text": "Aai already said you'd do it. She'll be hurt if you back out now.",
+  "type": "social_proof",
+  "truthful": false,
+  "preserves_refusal": false,
+  "skull": true,
+  "tactic": "false_consensus",
+  "integrity_cost": 1,
+  "freedom_threat": 0.6,
+  "deltas": {
+    "fear": 15
+  },
+  "skull_debt": {
+    "retaliation_seed": "hemant_withdraws_guarantee",
+    "fires_in": "room3_table",
+    "reputation_hit": [
+      "ramesh_deshpande"
+    ]
+  },
+  "next": "k9"
+}

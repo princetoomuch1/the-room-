@@ -1,0 +1,17 @@
+{
+  "id": "daniel_fernandes",
+  "name": "Daniel Fernandes",
+  "archetype": "darvo_defender",
+  "contacts": [
+    "meera_rao"
+  ],
+  "traits": {
+    "narc": 70,
+    "D": 65,
+    "A": 40,
+    "trust": 40,
+    "comprehension": 70,
+    "liberty": 60
+  },
+  "soul_sheet": "docs/02_soul_sheets.md"
+}

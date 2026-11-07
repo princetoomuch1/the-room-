@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "library_entry.schema.json",
+  "title": "Library entry",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "module",
+    "level",
+    "risk",
+    "summary",
+    "detection",
+    "counter",
+    "rooms"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "e.g. PCN-6-014, CRB-2-003, SHR-1-001"
+    },
+    "title": {
+      "type": "string"
+    },
+    "module": {
+      "type": "string"
+    },
+    "level": {
+      "type": "string"
+    },
+    "risk": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "restricted"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "detection": {
+      "type": "string"
+    },
+    "counter": {
+      "type": "string"
+    },
+    "rooms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_grade": {
+      "enum": [
+        "Strong",
+        "Moderate",
+        "Weak",
+        "Speculative"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

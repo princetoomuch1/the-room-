@@ -1,0 +1,16 @@
+{
+  "id": "wall_signed",
+  "title": "The Wall (signed)",
+  "selection": {
+    "priority": 5,
+    "rule": "fallback"
+  },
+  "prose_ref": "docs/06_endings.md#the-wall",
+  "conditional_lines": [
+    {
+      "when": "always",
+      "replace": "In your bag there is a document. You haven't read it yet...",
+      "with": "In your bag there is a copy of a document you signed..."
+    }
+  ]
+}

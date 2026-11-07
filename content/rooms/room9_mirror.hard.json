@@ -1,0 +1,24 @@
+{
+  "base": "room9_mirror.medium",
+  "mode": "hard",
+  "tell_window_default": 1,
+  "state": { "mirror_leverage": 60, "player_certainty": 45 },
+  "construction_overrides": {
+    "empty_history_multiplier": 0.75,
+    "skull_line_multiplier": 1.5,
+    "war_room_material_x2_if_flag": "mirror_gains_war_room_material_x2"
+  },
+  "surprise_tactic": {
+    "id": "boundary_mockery",
+    "node": "mr2",
+    "trigger": "player chose B at mr0 and mr1",
+    "line": "Monday. In writing. You said that to me already. Twice. Do you think saying it a third time makes it truer? Explain to me why Monday.",
+    "tactic": "bait_for_reasons",
+    "tell": { "id": "t_bait", "anchor": "phrase:Explain to me why Monday.", "window": 1, "reading": "It wants a reason. Any reason.", "false_positive": "It's a fair question. In a normal conversation you'd answer it." },
+    "correct_response": "B again, unchanged, or CALL: 'That's bait. Monday.'"
+  },
+  "clean_requires": ["at_least_two_correct_calls"],
+  "patch_nodes": {
+    "mr_win": { "line_default": "You're very sure of yourself for someone who has explained themselves in every room." }
+  }
+}

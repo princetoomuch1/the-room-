@@ -1,0 +1,16 @@
+{
+  "id": "fatima_sheikh",
+  "name": "Fatima Sheikh",
+  "archetype": "honest_skeptic",
+  "contacts": [],
+  "traits": {
+    "A": 30,
+    "O": 75,
+    "comprehension": 85,
+    "IQ": 85,
+    "D": 15,
+    "trust": 35,
+    "liberty": 60
+  },
+  "soul_sheet": "docs/02_soul_sheets.md"
+}

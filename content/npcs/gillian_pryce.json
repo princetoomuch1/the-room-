@@ -1,0 +1,16 @@
+{
+  "id": "gillian_pryce",
+  "name": "Gillian Pryce",
+  "archetype": "bureaucrat",
+  "contacts": [],
+  "traits": {
+    "C": 85,
+    "A": 40,
+    "trust": 45,
+    "procedural_rigidity": 80,
+    "comprehension": 60,
+    "liberty": 30,
+    "cautiousness": 80
+  },
+  "soul_sheet": "docs/02_soul_sheets.md"
+}

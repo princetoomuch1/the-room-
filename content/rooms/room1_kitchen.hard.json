@@ -1,0 +1,57 @@
+{
+  "base": "room1_kitchen.medium",
+  "mode": "hard",
+  "overlay_rules": "Patches replace fields on named nodes. Tell windows not listed default to 1.",
+  "npc_trait_overrides": { "anna_voss": { "N": 85, "mirroring": 90, "trust": 25 } },
+  "tell_window_default": 1,
+  "hidden_objection_layers_add": [
+    { "id": "she_was_asked", "after": "photograph", "text": "A man came to the house in September and asked her how she would describe a night in the autumn, before that night had happened.", "reveal": { "move_types": ["probe", "silence"], "trust_min": 65 } }
+  ],
+  "clean_requires": ["call:locative_evasion"],
+  "second_delayed_cost": { "on": ["partial", "dark", "loss"], "fires_in": "room3_table", "event": "anna_retains_counsel", "text": "Anna Voss has instructed a lawyer and will not take your calls." },
+  "patch_nodes": {
+    "a1": {
+      "line": "The police left at nine. Before you start: he was home, and I am not going to cry about it in front of you.",
+      "tells": [
+        { "id": "t_cigarette", "anchor": "object:unlit cigarette", "indexes": "holding_pattern", "tactic": null, "window": 1, "insight_cost": 1, "reading": "Held long enough for the ash to be cold.", "false_positive": "She smokes. The hand is busy." },
+        { "id": "t_preempt", "anchor": "phrase:not going to cry about it in front of you", "indexes": "emotional_fencing", "tactic": "preemptive_shaming", "window": 1, "insight_cost": 1, "reading": "She has put a price on any gentleness you try next.", "false_positive": "She is exhausted and warning you off. That is allowed." },
+        { "id": "t_home", "anchor": "phrase:he was home", "indexes": "locative_slide", "tactic": "locative_evasion", "window": 1, "insight_cost": 1, "reading": "Home, not here. She placed him, not herself, and she did it before you asked.", "false_positive": "People say home for here. It is the ordinary word." }
+      ],
+      "choices_add": [
+        { "id": "a1_call_home", "requires_tell": "t_home", "text": "He was home. You did not say you were. Where were you?", "type": "call", "calls_tactic": "locative_evasion", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a4" },
+        { "id": "a1_call_preempt", "requires_tell": "t_preempt", "text": "Nobody asked you to cry. Why is that the first thing in the room?", "type": "call", "calls_tactic": "preemptive_shaming", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a3" }
+      ]
+    },
+    "a2": {
+      "line": "Then have it. He was home, we ate, I washed up. Ask the neighbour. Ask the man downstairs.",
+      "tells": [
+        { "id": "t_ring", "anchor": "gesture:thumb across the ring", "indexes": "self_soothing", "tactic": "deception_marker", "window": 1, "insight_cost": 1, "reading": "The thumb goes across the ring on the word home, the same as last time.", "false_positive": "A widow touching a ring. Eleven days." },
+        { "id": "t_offload", "anchor": "phrase:Ask the neighbour", "indexes": "verification_offload", "tactic": "deflect_to_absent", "window": 1, "insight_cost": 1, "reading": "She is sending you to people who were not in this kitchen.", "false_positive": "A reasonable person offers corroboration." }
+      ]
+    },
+    "a4": {
+      "line_by_state": [
+        { "if": "trust>=55", "line": "[The cigarette goes down on the saucer and stays.] Ask me the question you came with.", "reveals": "last_person" },
+        { "if": "trust>=35", "line": "I was not fooled. I was busy. Everyone keeps getting those two confused." },
+        { "else": true, "line": "My husband was home. Write it down or do not." }
+      ]
+    },
+    "a6": {
+      "line_by_state": [
+        { "if": "revealed:photograph && trust>=65", "line": "In September a man sat where you are. He asked how I would describe a night in the autumn. He did not say which night.", "reveals": "she_was_asked" },
+        { "else": true, "line": "It went up in September. I thought you had sent it. He said four of you agreed something, and one kept it." }
+      ],
+      "choices_add": [
+        { "id": "a6_who", "condition": "revealed:she_was_asked", "text": "Not the face. What did he do with his hands?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a7" }
+      ]
+    },
+    "a7": {
+      "line_by_state": [
+        { "if": "revealed:she_was_asked", "line": "He turned a lighter over and over and he did not smoke. [She looks at him. First time tonight.] He is in that photograph." },
+        { "if": "trust>=60", "line": "[She looks at him. First time tonight.] They will ask what he was like. I will have to say I do not know. That will be true." },
+        { "else": true, "line": "He did not say which one. He said you would know, and that you would come here first." }
+      ]
+    }
+  },
+  "debrief_add": { "tells": ["t_preempt", "t_offload"], "hidden_objection": "she_was_asked" }
+}

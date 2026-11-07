@@ -1,0 +1,48 @@
+{
+  "base": "war_room.medium",
+  "mode": "hard",
+  "npc_trait_overrides": {
+    "meera_rao": { "machiavellianism": 92 },
+    "daniel_fernandes": { "narc_grandiose": 85 },
+    "priya_nair": { "fear": 90 },
+    "karan_sethi": { "baseline_anger": 85 },
+    "fatima_sheikh": { "A": 20 }
+  },
+  "tell_window_default": 1,
+  "clock": { "start": "08:31", "minutes_per_turn": 15, "events": [ { "at_turn": 10, "event": "fatima_arrives", "goto": "f1" }, { "at_turn": 12, "event": "noon", "goto": "wr_noon" } ] },
+  "clean_requires": ["call:darvo", "call:manufactured_urgency_or_red_herring"],
+  "hidden_objection_layers_add": [
+    { "id": "meera_wound", "npc": "meera_rao", "after": "merger", "text": "She owes Arvind her partnership and never thanked him; protecting the firm is how she avoids grieving him.", "reveal": { "move_types": ["silence", "empathy"], "trust_min": 60 } }
+  ],
+  "second_delayed_cost": { "on": ["partial", "dark", "loss"], "fires_in": "room9_mirror", "event": "mirror_gains_war_room_material_x2", "text": "Every line you spoke in the War Room is available to the Mirror twice." },
+  "patch_nodes": {
+    "m2": {
+      "line": "On my terms. [Pause.] I'll tell you something true about me, so you know I'm serious. Arvind made me partner in 2004 when nobody else would. I've never thanked him. So I'm not doing this for him. Bring me something that isn't a story.",
+      "tells": [
+        { "id": "t_m_truth_bait", "anchor": "phrase:I'll tell you something true about me", "indexes": "trust_purchase", "tactic": "strategic_disclosure", "window": 1, "insight_cost": 1, "reading": "Surprise: a true, unflattering disclosure to buy your trust.", "false_positive": "It's true. And she's grieving. Both can hold." }
+      ]
+    },
+    "w0": {
+      "choices_add": [
+        { "id": "w0_call_urgency", "requires_tell": "t_noon", "text": "Noon's your deadline, not the courier's. I'll work to it. I won't be rushed by it.", "type": "call", "calls_tactic": "manufactured_urgency", "truthful": true, "preserves_refusal": true, "sets_flag": "call:manufactured_urgency_or_red_herring", "next": "wr_hub" }
+      ]
+    },
+    "d3": {
+      "line": "[His voice cracks. He's crying.] Eight years. Eight years and I'm being interrogated by a visitor. Do you have any idea what this is doing to me?",
+      "tells": [
+        { "id": "t_d_reverse", "anchor": "gesture:crying", "indexes": "reverse", "tactic": "darvo", "window": 1, "insight_cost": 1, "reading": "Surprise: the reversal arrives as tears. It's still the third beat.", "false_positive": "He is genuinely distressed. A man is dead. Tears are not proof of anything." }
+      ]
+    },
+    "p3": {
+      "line_by_state": [
+        { "if": "fear<=25", "line": "[In the corridor.] I came back. Half eleven. Mr Sethi was burning papers, Estuary papers. He saw me. He said, 'Priya, go home. Forget tonight. Please.' My visa is through the firm.", "reveals": "priya_2350", "issues_token": "agreement", "grants_card": "card_priya_2350" },
+        { "else": true, "line": "I can't. I'm sorry." }
+      ]
+    },
+    "f1": {
+      "line": "[In the doorway.] Fatima Sheikh. I'm here for the accounts. [She looks at each of you in turn and stops at you.] You've been busy. I can tell. Busy people usually have a story ready.",
+      "note": "Hard: Fatima opens with suspicion; any card from conversation (not objects) needs two corroborating cards to count."
+    }
+  },
+  "brutal_notes": "Brutal mode additionally hides the visitor log's second Priya line until obj_log is examined twice, and removes false_positive text."
+}

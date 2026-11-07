@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ending.schema.json",
+  "title": "Ending",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "selection",
+    "prose_ref",
+    "conditional_lines"
+  ],
+  "properties": {
+    "id": {
+      "enum": [
+        "diplomat",
+        "operator",
+        "wall",
+        "wall_signed",
+        "scapegoat"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "selection": {
+      "type": "object",
+      "properties": {
+        "priority": {
+          "type": "integer"
+        },
+        "rule": {
+          "type": "string"
+        }
+      }
+    },
+    "prose_ref": {
+      "type": "string"
+    },
+    "conditional_lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "when",
+          "replace",
+          "with"
+        ]
+      }
+    },
+    "content_note": {
+      "type": "boolean"
+    },
+    "crisis_resources_visible": {
+      "type": "boolean"
+    }
+  }
+}

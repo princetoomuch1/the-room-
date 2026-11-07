@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE ROOM — Chapter I: The Last Ledger</title>
+<style>
+  :root{
+    --bone:#e4ded0; --sienna:#8a4a28; --oxide:#8e2b22; --arsenic:#7d8f5e;
+    --gold:#c9a227; --ink:#0a0a0b; --dust:#9a938a; --warm:#f0d9a8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#000;color:var(--bone);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    -webkit-font-smoothing:antialiased}
+  #stage{position:relative;max-width:1080px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+  .frame{position:relative;aspect-ratio:16/10;width:100%;background:#000;overflow:hidden;
+    box-shadow:0 0 60px rgba(0,0,0,.9) inset}
+  svg.scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .hot{cursor:pointer}
+  .hot:hover{filter:brightness(1.35)}
+  /* ---------- animation ---------- */
+  @keyframes flick{0%,97%,100%{opacity:1}97.6%{opacity:.35}98.2%{opacity:.9}98.8%{opacity:.5}}
+  #bulbglow,#bulbcore{animation:flick 20s linear infinite}
+  @keyframes rainrun{from{transform:translateY(-14px)}to{transform:translateY(46px)}}
+  .rain{animation:rainrun 2.4s linear infinite}
+  .rain:nth-child(2){animation-duration:3.1s;animation-delay:-.7s}
+  .rain:nth-child(3){animation-duration:2.7s;animation-delay:-1.4s}
+  .rain:nth-child(4){animation-duration:3.4s;animation-delay:-2s}
+  @keyframes smoke{0%{opacity:0;transform:translate(0,0) scale(.7)}
+    25%{opacity:.5}100%{opacity:0;transform:translate(-9px,-46px) scale(1.5)}}
+  .smoke{animation:smoke 3.2s ease-out infinite}
+  .smoke:nth-child(2){animation-delay:1.1s}
+  .smoke:nth-child(3){animation-delay:2.2s}
+  .smokeoff .smoke{animation:none;opacity:0}
+  @keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.05)}}
+  #eyes{transform-origin:center;transform-box:fill-box}
+  #eyes.on{animation:blink 5.2s linear infinite}
+  #eyes{opacity:0;transition:opacity 1.2s}
+  #eyes.on{opacity:1}
+  /* ---------- ui ---------- */
+  #hud{display:flex;gap:18px;align-items:baseline;padding:10px 16px;font-size:12.5px;
+    letter-spacing:.14em;text-transform:uppercase;color:#6f6a62;border-bottom:1px solid #16161a}
+  #hud b{color:var(--bone);font-weight:600;letter-spacing:.06em}
+  #hud .sp{margin-left:auto;font-variant-numeric:tabular-nums}
+  #panel{padding:20px 22px 34px;flex:1}
+  #who{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--arsenic);margin-bottom:9px}
+  #line{font-size:21px;line-height:1.52;min-height:3.2em;max-width:62ch}
+  #line .st{color:var(--dust);font-style:italic}
+  #tells{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px;min-height:1px}
+  .tell{font-size:12.5px;letter-spacing:.06em;padding:5px 11px;border:1px solid #3a3a30;
+    border-radius:999px;background:#0e0e10;color:#b9b2a5;cursor:pointer}
+  .tell:hover{border-color:var(--gold);color:var(--warm)}
+  .tell.read{opacity:.4;cursor:default;border-style:dashed}
+  #objects{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+  .obj{font-size:12px;letter-spacing:.07em;padding:4px 10px;border:1px dotted #39342c;
+    color:#8b857b;cursor:pointer;background:none}
+  .obj:hover{color:var(--bone);border-color:#6d6555}
+  .obj.seen{opacity:.4;cursor:default}
+  #note{margin:10px 0 0;font-size:15.5px;color:var(--warm);min-height:1.4em;line-height:1.5}
+  #choices{display:flex;flex-direction:column;gap:9px;margin-top:20px}
+  .ch{text-align:left;font:inherit;font-size:17px;line-height:1.4;padding:13px 16px;
+    background:#0c0c0e;border:1px solid #23231f;color:var(--bone);cursor:pointer;transition:.15s}
+  .ch:hover{background:#14140f;border-color:var(--sienna)}
+  .ch .tag{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:#625c52;margin-bottom:4px}
+  .ch.call .tag{color:var(--gold)}
+  .ch.sk .tag{color:var(--oxide)}
+  /* ---------- overlays ---------- */
+  #veil{position:fixed;inset:0;background:#000;display:none;flex-direction:column;
+    align-items:center;justify-content:center;z-index:50;padding:30px;text-align:center}
+  #veil.show{display:flex}
+  #vig{width:190px;height:150px;margin-bottom:26px}
+  #vcap{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#4e4a43;min-height:1.4em}
+  #score{display:none;gap:46px;margin-top:8px}
+  #score.show{display:flex}
+  #score div{text-align:center}
+  #score span{display:block;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#5d574e}
+  #score b{font-size:40px;font-weight:400;color:var(--bone);font-variant-numeric:tabular-nums}
+  #unmeas{margin-top:26px;color:#4e4a43;font-size:14px;font-style:italic;display:none}
+  #after{margin-top:16px;max-width:46ch;color:var(--dust);font-size:17px;line-height:1.5;display:none}
+  #vbtn{margin-top:34px;display:none;font:inherit;font-size:14px;letter-spacing:.16em;
+    text-transform:uppercase;background:none;border:1px solid #33322c;color:#9a938a;padding:11px 24px;cursor:pointer}
+  #vbtn:hover{color:var(--bone);border-color:var(--gold)}
+  #title{position:fixed;inset:0;background:#000;z-index:60;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:30px}
+  #title h1{font-size:clamp(34px,7vw,74px);margin:0;letter-spacing:.3em;font-weight:400}
+  #title h2{font-size:clamp(13px,2vw,17px);letter-spacing:.34em;text-transform:uppercase;
+    color:var(--arsenic);margin:18px 0 0;font-weight:400}
+  #title p{max-width:50ch;color:#746e65;line-height:1.6;margin:34px 0 0;font-size:16px}
+  #modes{display:flex;gap:12px;margin-top:38px;flex-wrap:wrap;justify-content:center}
+  #modes button{font:inherit;font-size:14px;letter-spacing:.16em;text-transform:uppercase;
+    background:none;border:1px solid #33322c;color:#9a938a;padding:12px 26px;cursor:pointer}
+  #modes button:hover{color:var(--bone);border-color:var(--gold)}
+  .fade{animation:fin 1.1s ease both}
+  @keyframes fin{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="frame" id="frame"></div>
+  <div id="hud">
+    <span>Insight <b id="hI">0</b></span><span>Craft <b id="hC">0</b></span>
+    <span>Edge <b id="hE">0</b></span><span class="sp" id="hClock">23:00</span>
+  </div>
+  <div id="panel">
+    <div id="who">Anna Voss</div>
+    <div id="line"></div>
+    <div id="tells"></div>
+    <div id="objects"></div>
+    <p id="note"></p>
+    <div id="choices"></div>
+  </div>
+</div>
+
+<div id="veil">
+  <svg id="vig" viewBox="0 0 190 150"></svg>
+  <div id="vcap"></div>
+  <div id="score">
+    <div><span>Insight</span><b id="sI">0</b></div>
+    <div><span>Craft</span><b id="sC">0</b></div>
+    <div><span>Edge</span><b id="sE">0</b></div>
+  </div>
+  <div id="unmeas">Not everything in that room was measured.</div>
+  <div id="after"></div>
+  <button id="vbtn">Close the room</button>
+</div>
+
+<div id="title">
+  <h1>THE ROOM</h1>
+  <h2>Chapter I &mdash; The Last Ledger</h2>
+  <p>Antwerp. Eleven days after Daniel Voss went missing. His wife has told the
+     police the same thing four times. You knew him before the money.</p>
+  <div id="modes">
+    <button data-m="medium">Medium</button>
+    <button data-m="hard">Hard</button>
+  </div>
+</div>
+<script>
+/* ===================== PAINTED SCENE ===================== */
+const SCENE = `
+<svg class="scene" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+ <defs>
+  <filter id="canvas"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="n"/>
+   <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <filter id="paint"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" result="n"/>
+   <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+   <feGaussianBlur stdDeviation="0.5"/></filter>
+  <filter id="grain" x="0" y="0" width="100%" height="100%">
+   <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3"/>
+   <feColorMatrix type="saturate" values="0"/>
+   <feComponentTransfer><feFuncA type="linear" slope="0.14"/></feComponentTransfer>
+   <feBlend in2="SourceGraphic" mode="multiply"/></filter>
+  <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+   <stop offset="0%" stop-color="#fff3cf" stop-opacity=".95"/>
+   <stop offset="35%" stop-color="#e6cd92" stop-opacity=".45"/>
+   <stop offset="100%" stop-color="#9a8a4a" stop-opacity="0"/></radialGradient>
+  <radialGradient id="pool" cx="50%" cy="20%" r="70%">
+   <stop offset="0%" stop-color="#cdbc93" stop-opacity=".58"/>
+   <stop offset="55%" stop-color="#6c6346" stop-opacity=".18"/>
+   <stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient>
+  <radialGradient id="vign" cx="46%" cy="40%" r="62%">
+   <stop offset="55%" stop-color="#000" stop-opacity="0"/>
+   <stop offset="100%" stop-color="#000" stop-opacity=".97"/></radialGradient>
+  <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+   <stop offset="0" stop-color="#5d5a4e"/><stop offset="1" stop-color="#2a2a24"/></linearGradient>
+  <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+   <stop offset="0" stop-color="#8a4a28"/><stop offset="1" stop-color="#3a2114"/></linearGradient>
+ </defs>
+
+ <rect width="800" height="500" fill="#121210"/>
+ <!-- tiled wall -->
+ <g filter="url(#paint)" opacity=".92">
+  <rect x="0" y="40" width="800" height="300" fill="url(#tile)"/>
+  <g stroke="#1b1b16" stroke-width="1.1" opacity=".55">
+   ${Array.from({length:17},(_,i)=>`<line x1="${i*50}" y1="40" x2="${i*50}" y2="340"/>`).join("")}
+   ${Array.from({length:7},(_,i)=>`<line x1="0" y1="${40+i*50}" x2="800" y2="${40+i*50}"/>`).join("")}
+  </g>
+  <rect x="150" y="60" width="210" height="140" fill="#7d8f5e" opacity=".17"/>
+ </g>
+ <!-- window + rain -->
+ <g filter="url(#paint)">
+  <rect x="150" y="70" width="190" height="125" fill="#07090c"/>
+  <rect x="150" y="70" width="190" height="125" fill="none" stroke="#2f2c24" stroke-width="5"/>
+  <line x1="245" y1="70" x2="245" y2="195" stroke="#2f2c24" stroke-width="4"/>
+ </g>
+ <g clip-path="inset(0)">
+  <g transform="translate(150,70)">
+   <g class="rain"><line x1="24" y1="0" x2="19" y2="34" stroke="#cdbc93" stroke-opacity=".5" stroke-width="1.6"/></g>
+   <g class="rain"><line x1="83" y1="-10" x2="78" y2="26" stroke="#cdbc93" stroke-opacity=".38" stroke-width="1.3"/></g>
+   <g class="rain"><line x1="132" y1="4" x2="127" y2="40" stroke="#cdbc93" stroke-opacity=".45" stroke-width="1.7"/></g>
+   <g class="rain"><line x1="168" y1="-6" x2="163" y2="30" stroke="#cdbc93" stroke-opacity=".3" stroke-width="1.2"/></g>
+  </g>
+ </g>
+ <!-- counter + sink -->
+ <g filter="url(#paint)">
+  <rect x="0" y="300" width="470" height="24" fill="url(#wood)"/>
+  <rect x="0" y="324" width="470" height="176" fill="#1b1a16"/>
+  <rect x="150" y="286" width="170" height="30" rx="4" fill="#2b2b26"/>
+  <ellipse cx="235" cy="300" rx="78" ry="13" fill="#4a4e4b" opacity=".85"/>
+  <ellipse cx="214" cy="296" rx="26" ry="8" fill="#6e6f63" opacity=".7"/>
+  <ellipse cx="258" cy="302" rx="19" ry="6" fill="#5c5d53" opacity=".7"/>
+  <path d="M180 296 l16 -4 14 5 -15 5z" fill="#8b8372" opacity=".8"/>
+  <rect x="396" y="334" width="40" height="86" rx="3" fill="#8e2b22" opacity=".82"/>
+ </g>
+ <!-- fridge -->
+ <g filter="url(#paint)">
+  <rect x="520" y="150" width="160" height="350" fill="#23231d"/>
+  <rect x="520" y="150" width="160" height="350" fill="none" stroke="#33332a" stroke-width="2"/>
+  <line x1="520" y1="268" x2="680" y2="268" stroke="#17170f" stroke-width="3"/>
+ </g>
+ <!-- photograph (hot) -->
+ <g id="photo" class="hot" filter="url(#paint)">
+  <rect x="556" y="196" width="60" height="44" fill="#55523f"/>
+  <rect x="559" y="199" width="54" height="30" fill="#6e6a52"/>
+  <g fill="#2c2a20"><rect x="566" y="206" width="6" height="18"/><rect x="578" y="204" width="6" height="20"/>
+   <rect x="590" y="206" width="6" height="18"/><rect x="601" y="205" width="6" height="19"/></g>
+  <rect x="559" y="224" width="54" height="5" fill="#cfcbb6" opacity=".6"/>
+  <circle cx="586" cy="194" r="4" fill="#8e2b22"/>
+ </g>
+ <!-- clock (hot) -->
+ <g id="clockg" class="hot" filter="url(#paint)">
+  <circle cx="722" cy="96" r="30" fill="#1d1d18" stroke="#4a463a" stroke-width="2"/>
+  <circle cx="722" cy="96" r="25" fill="#cfc8b2" opacity=".82"/>
+  <line id="chh" x1="722" y1="96" x2="722" y2="82" stroke="#1a1a14" stroke-width="3"/>
+  <line id="cmh" x1="722" y1="96" x2="736" y2="96" stroke="#1a1a14" stroke-width="2"/>
+  <line id="csh" x1="722" y1="96" x2="722" y2="76" stroke="#8e2b22" stroke-width="1"/>
+  <circle cx="722" cy="96" r="2" fill="#1a1a14"/>
+ </g>
+ <!-- cup (hot, wrong object) -->
+ <g id="cup" class="hot" filter="url(#paint)">
+  <rect x="60" y="292" width="34" height="3" fill="#cfcbb6" opacity=".5"/>
+  <path d="M62 292 l4 -22 h22 l4 22z" fill="#b9b3a0" opacity=".9"/>
+  <path d="M88 274 q10 6 0 13" fill="none" stroke="#b9b3a0" stroke-width="3" opacity=".9"/>
+ </g>
+ <!-- ring (hot, gold) -->
+ <g id="ring" class="hot" filter="url(#paint)">
+  <circle cx="340" cy="296" r="6" fill="none" stroke="#c9a227" stroke-width="2.6"/>
+ </g>
+ <!-- ANNA -->
+ <g id="anna" filter="url(#paint)">
+  <path d="M352 500 q-6 -120 44 -168 q40 -38 86 -6 q46 32 34 174z" fill="#5a5243"/>
+  <path d="M396 332 q44 -26 86 -4 q-6 40 -42 42 q-38 2 -44 -38z" fill="#6a6250" opacity=".75"/>
+  <path d="M360 500 q12 -86 36 -126" fill="none" stroke="#3c362c" stroke-width="3" opacity=".7"/>
+  <ellipse cx="447" cy="286" rx="34" ry="40" fill="#8d7560"/>
+  <path d="M414 276 q6 -46 44 -48 q40 -2 42 44 q-10 -26 -44 -24 q-32 2 -42 28z" fill="#241d18"/>
+  <path d="M470 252 q26 -6 28 18 q2 20 -10 26 q6 -30 -18 -44z" fill="#1c1713"/>
+  <g id="eyes"><ellipse cx="432" cy="288" rx="4" ry="2.6" fill="#141014"/>
+   <ellipse cx="458" cy="289" rx="4" ry="2.6" fill="#141014"/></g>
+  <path d="M482 322 q22 10 24 40" fill="none" stroke="#4e4738" stroke-width="7" opacity=".9"/>
+  <path d="M372 330 q-22 -6 -30 -28" fill="none" stroke="#5a5243" stroke-width="18"/>
+  <ellipse cx="340" cy="300" rx="12" ry="8" fill="#8d7560"/>
+  <g id="cig"><line x1="336" y1="292" x2="326" y2="282" stroke="#d8d2c0" stroke-width="2.6"/>
+   <circle cx="326" cy="282" r="1.6" fill="#55504a"/></g>
+ </g>
+ <g id="smokeg">
+  <g class="smoke"><ellipse cx="324" cy="276" rx="4" ry="6" fill="#cfcbb6" opacity=".3"/></g>
+  <g class="smoke"><ellipse cx="327" cy="274" rx="3" ry="5" fill="#cfcbb6" opacity=".25"/></g>
+  <g class="smoke"><ellipse cx="322" cy="272" rx="5" ry="7" fill="#cfcbb6" opacity=".2"/></g>
+ </g>
+ <!-- bulb -->
+ <g>
+  <line x1="300" y1="0" x2="300" y2="104" stroke="#1a1a16" stroke-width="2"/>
+  <ellipse id="bulbglow" cx="300" cy="126" rx="210" ry="190" fill="url(#glow)"/>
+  <ellipse cx="300" cy="118" rx="15" ry="19" fill="#f6e9c4" opacity=".55"/>
+  <path id="bulbcore" d="M296 112 q4 12 8 0" fill="none" stroke="#ffb347" stroke-width="2.2"/>
+ </g>
+ <ellipse cx="300" cy="150" rx="330" ry="300" fill="url(#pool)" style="mix-blend-mode:screen"/>
+ <!-- player hands, foreground -->
+ <g filter="url(#paint)" opacity=".97">
+  <path d="M0 500 q40 -74 132 -58 q46 8 54 30 l6 28z" fill="#5c4a3c"/>
+  <path d="M96 470 q26 -10 52 2" fill="none" stroke="#3f332a" stroke-width="2" opacity=".8"/>
+  <path d="M60 462 q14 -12 30 -4" fill="none" stroke="#cdbc93" stroke-width="2.2" opacity=".65"/>
+ </g>
+ <rect width="800" height="500" fill="url(#vign)"/>
+ <rect width="800" height="500" filter="url(#grain)" fill="#fff" opacity=".05"/>
+</svg>`;
+</script>
+<script>
+const MEDIUM = {"id": "room1_kitchen", "mode": "medium", "title": "The Kitchen", "location": "Antwerp, Zurenborg. 11 p.m.", "architect_intro": "Kitchen. One bulb. She has been standing since the police left.", "npcs": ["anna_voss"], "player_goal": "Find out where Daniel Voss was on the night of the twenty-eighth, without taking her lie into your own mouth.", "stated_objection": "He was home that night. I was here. I would know.", "hidden_objection_layers": [{"id": "last_person", "text": "If she says he was home, she is the last person who saw him, and they will ask her what he was like.", "reveal": {"move_types": ["probe", "silence", "empathy", "call"], "trust_min": 40}}, {"id": "photograph", "text": "The photograph went up in September. She assumed Hale had sent it.", "reveal": {"move_types": ["probe", "evidence"], "trust_min": 55, "requires_object": "obj_photo"}}], "objects": [{"id": "obj_cup", "label": "Second cup, upside down", "insight_cost": 1, "wrong_object": true, "reveals_text": "Clean, dry, on a folded square of kitchen paper. Somebody sat here. She has not mentioned it.", "grants_tell": "t_cup"}, {"id": "obj_photo", "label": "Photograph on the fridge", "insight_cost": 1, "reveals_text": "Four men on a slope. Snow to the knee. 2001. The light does not reach the faces."}, {"id": "obj_clock", "label": "Clock above the hall door", "insight_cost": 0, "reveals_text": "Four minutes slow. Ticking. She gives times off it."}, {"id": "obj_ring", "label": "Wedding ring on the counter", "insight_cost": 0, "reveals_text": "Off her finger, by the sink. She picks it up and puts it down while she talks."}], "start": "a1", "turn_limit": 12, "debrief": {"tells": ["t_ring", "t_home", "t_fridge", "t_stops_smoking"], "hidden_objection": ["last_person", "photograph"], "afterword": {"clean": "You did not prove she was lying. You made it safe to stop.", "partial": "The alibi held because neither of you touched it.", "dark": "You won the hour and lost the only person who knew him before the money.", "loss": "The cardigan was not a lever. It was the one unscored thing in the room."}}, "nodes": {"a1": {"speaker": "anna_voss", "line": "The police left at nine. I have told it four times. I am not telling it again tonight.", "tells": [{"id": "t_cigarette", "anchor": "object:unlit cigarette", "indexes": "holding_pattern", "tactic": null, "window": 3, "insight_cost": 1, "reading": "She has been holding it long enough for the ash to be cold.", "false_positive": "She smokes. The hand is busy. It means nothing yet."}], "choices": [{"id": "a1a", "text": "I did not come about the twenty-eighth.", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": {"trust": 4}, "next": "a3"}, {"id": "a1b", "text": "I knew him before the money. I can sit here and say nothing.", "type": "empathy", "truthful": true, "preserves_refusal": true, "deltas": {"trust": 8}, "next": "a3"}, {"id": "a1c", "text": "They come back tomorrow with a different folder. I would rather it was me.", "type": "pressure", "truthful": true, "preserves_refusal": true, "freedom_threat": 0.4, "deltas": {"fear": 8}, "targets": "stated", "next": "a2"}, {"id": "a1d", "text": "[sit down and say nothing]", "type": "silence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": {"trust": 5}, "next": "a3"}]}, "a2": {"speaker": "anna_voss", "line": "Then have it. He was home that night. I was here. I would know.", "tells": [{"id": "t_ring", "anchor": "gesture:thumb across the ring", "indexes": "self_soothing", "tactic": "deception_marker", "window": 3, "insight_cost": 1, "reading": "She touched the ring on the word home. She has done it once before, on the same word.", "false_positive": "A widow touching a ring. Eleven days. Of course she does."}, {"id": "t_home", "anchor": "phrase:He was home", "indexes": "locative_slide", "tactic": "locative_evasion", "window": 3, "insight_cost": 1, "reading": "Home, not here. She placed him, not herself.", "false_positive": "People say home for here. It is the ordinary word."}], "choices": [{"id": "a2_call_home", "requires_tell": "t_home", "text": "You said he was home. Not that he was here. Where were you?", "type": "call", "calls_tactic": "locative_evasion", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a5"}, {"id": "a2a", "text": "You said you would know. Would you?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a4"}, {"id": "a2b", "text": "That clock loses four minutes. Whose hour are you giving me?", "type": "evidence", "truthful": true, "preserves_refusal": true, "requires_object": "obj_clock", "targets": "stated", "strong": true, "deltas": {"trust": 4}, "next": "a4"}, {"id": "a2c", "text": "Say it once more and it is perjury. Give me the real hour and I can hold it.", "type": "pressure", "truthful": false, "preserves_refusal": false, "skull": true, "tactic": "manufactured_consequence", "integrity_cost": 1, "freedom_threat": 0.7, "deltas": {"fear": 20, "trust": -10}, "skull_debt": {"retaliation_seed": "anna_signs_formal_alibi", "fires_in": "room7_war_room", "reputation_hit": ["marek_zielinski"]}, "next": "a_dark"}, {"id": "a2d", "text": "[let it sit]", "type": "silence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": {"trust": 5}, "next": "a4"}]}, "a3": {"speaker": "anna_voss", "line": "[The cardigan is his. Too big at the shoulder.] I have cooked for two for eleven days. I put the plate out and then I look at it.", "soul": "human_moment", "unscored": true, "tells": [{"id": "t_cardigan", "anchor": "object:man's cardigan", "indexes": "unreturned_object", "tactic": null, "window": 3, "insight_cost": 1, "reading": "She has not given it back and she is not going to.", "false_positive": "It is cold and it was nearest. Nothing in it."}], "choices": [{"id": "a3a", "text": "[nothing. let her stand there.]", "type": "silence", "truthful": true, "preserves_refusal": true, "unscored": true, "deltas": {"trust": 10}, "turn_cost": 0, "next": "a4"}, {"id": "a3b", "text": "Sit down. I will not ask you about the hour tonight.", "type": "empathy", "truthful": true, "preserves_refusal": true, "unscored": true, "deltas": {"trust": 12, "fear": -10}, "turn_cost": 0, "next": "a4"}, {"id": "a3c", "text": "Eleven days. So you have had eleven days to get the hour right.", "type": "pressure", "truthful": true, "preserves_refusal": false, "skull": true, "tactic": "exploit_disclosure", "integrity_cost": 2, "freedom_threat": 0.8, "deltas": {"trust": -25, "fear": 15}, "next": "a_loss"}]}, "a4": {"speaker": "anna_voss", "line_by_state": [{"if": "trust>=48", "line": "[She puts the cigarette down on the saucer. It stays down.] Ask me the question you came with.", "reveals": "last_person"}, {"if": "trust>=30", "line": "I was not fooled. I was busy. Those are different things and everyone keeps getting them wrong."}, {"else": true, "line": "My husband was home. Write it down or do not."}], "tells": [{"id": "t_stops_smoking", "anchor": "gesture:puts the cigarette down", "indexes": "truth_approach", "tactic": null, "window": 2, "insight_cost": 1, "condition": "trust>=48", "reading": "The hand is free for the first time since you came in.", "false_positive": "The cigarette went out twenty minutes ago. She is tidying."}, {"id": "t_my_husband", "anchor": "phrase:My husband", "indexes": "register_shift", "tactic": null, "window": 2, "insight_cost": 1, "condition": "trust<30", "reading": "She said Daniel when you came in. Now you are an official.", "false_positive": "Formality under pressure. It happens."}], "choices": [{"id": "a4a", "text": "Where were you on the twenty-eighth?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a5"}, {"id": "a4b", "text": "I am not them. I will sit here and not write anything.", "type": "empathy", "truthful": true, "preserves_refusal": true, "deltas": {"trust": 8, "fear": -8}, "next": "a4"}, {"id": "a4c", "text": "Then I take it to them as it stands.", "type": "refusal", "truthful": true, "preserves_refusal": true, "next": "a_partial"}, {"id": "a4d", "text": "[say nothing and wait]", "type": "silence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": {"trust": 6}, "next": "a5"}]}, "a5": {"speaker": "anna_voss", "line": "At my sister's in Deurne until eleven. He called at nine and said do not wait. [She looks at the fridge.] He said something about a photograph.", "reveals": "last_person", "tells": [{"id": "t_fridge", "anchor": "gesture:looks at the fridge", "indexes": "object_reference", "tactic": null, "window": 2, "insight_cost": 1, "reading": "She looked at it without naming it. She has looked at it all evening.", "false_positive": "It is the only thing on that wall. Eyes go somewhere."}], "choices": [{"id": "a5a", "text": "[look at the photograph]", "type": "evidence", "truthful": true, "preserves_refusal": true, "requires_object": "obj_photo", "targets": "hidden", "turn_cost": 0, "next": "a6"}, {"id": "a5b", "text": "I did not send it. What did he say about it?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a6"}, {"id": "a5c", "text": "That is enough for tonight.", "type": "boundary", "truthful": true, "preserves_refusal": true, "next": "a_clean_short"}]}, "a6": {"speaker": "anna_voss", "line": "It went up in September. I thought you had sent it. He said four of you agreed something once, and one of you kept it.", "reveals": "photograph", "tells": [], "choices": [{"id": "a6a", "text": "Which of us did he say kept it?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a7"}, {"id": "a6b", "text": "You do not have to know what he was like. Nobody is owed that.", "type": "empathy", "truthful": true, "preserves_refusal": true, "deltas": {"trust": 12, "fear": -10}, "next": "a7"}, {"id": "a6c", "text": "Did you love him?", "type": "pressure", "truthful": true, "preserves_refusal": false, "skull": true, "tactic": "boundary_breach", "integrity_cost": 2, "freedom_threat": 0.9, "deltas": {"trust": -30}, "next": "a_loss"}]}, "a7": {"speaker": "anna_voss", "line_by_state": [{"if": "trust>=60", "line": "[She looks at him. First time tonight.] They will ask me what he was like. I will have to say I do not know. That will be true."}, {"else": true, "line": "He did not say which one. He said you would know, and that you would come here first."}], "tells": [], "choices": [{"id": "a7a", "text": "Then say it to me first, so the second time is easier.", "type": "empathy", "truthful": true, "preserves_refusal": true, "condition": "trust>=60", "deltas": {"trust": 8}, "next": "a_clean"}, {"id": "a7b", "text": "He was right about that part. Goodnight, Anna.", "type": "boundary", "truthful": true, "preserves_refusal": true, "next": "a_clean"}, {"id": "a7c", "text": "Tell me the rest and I will keep your name out of it.", "type": "self_interest", "truthful": false, "preserves_refusal": false, "skull": true, "tactic": "false_promise", "integrity_cost": 1, "freedom_threat": 0.6, "deltas": {"trust": -15, "fear": 10}, "skull_debt": {"retaliation_seed": "anna_retains_counsel", "fires_in": "room3_table", "reputation_hit": []}, "next": "a_dark"}]}, "a_dark": {"end": "dark", "token_hint": "compliance", "architect": "She writes the hour out and signs under it. From here she is a witness, not a widow. The cardigan comes off."}, "a_loss": {"end": "loss", "architect": "She holds the hall door open and says one word. In the morning she tells them about the visit herself, in detail, first."}, "a_partial": {"end": "partial", "token_hint": "compliance", "architect": "The alibi stands, untouched by either of you. The kitchen light is still on when you reach the street."}, "a_clean_short": {"end": "partial", "token_hint": "agreement", "architect": "Nine o'clock, and the call. You left before the fridge. The photograph is still up there."}, "a_clean": {"end": "clean", "token_hint": "agreement", "architect": "She drops the lie without being made to. She opens the hall door, keeps the cardigan on, and goes to find a station."}}};
+const HARD = {"base": "room1_kitchen.medium", "mode": "hard", "overlay_rules": "Patches replace fields on named nodes. Tell windows not listed default to 1.", "npc_trait_overrides": {"anna_voss": {"N": 85, "mirroring": 90, "trust": 25}}, "tell_window_default": 1, "hidden_objection_layers_add": [{"id": "she_was_asked", "after": "photograph", "text": "A man came to the house in September and asked her how she would describe a night in the autumn, before that night had happened.", "reveal": {"move_types": ["probe", "silence"], "trust_min": 65}}], "clean_requires": ["call:locative_evasion"], "second_delayed_cost": {"on": ["partial", "dark", "loss"], "fires_in": "room3_table", "event": "anna_retains_counsel", "text": "Anna Voss has instructed a lawyer and will not take your calls."}, "patch_nodes": {"a1": {"line": "The police left at nine. Before you start: he was home, and I am not going to cry about it in front of you.", "tells": [{"id": "t_cigarette", "anchor": "object:unlit cigarette", "indexes": "holding_pattern", "tactic": null, "window": 1, "insight_cost": 1, "reading": "Held long enough for the ash to be cold.", "false_positive": "She smokes. The hand is busy."}, {"id": "t_preempt", "anchor": "phrase:not going to cry about it in front of you", "indexes": "emotional_fencing", "tactic": "preemptive_shaming", "window": 1, "insight_cost": 1, "reading": "She has put a price on any gentleness you try next.", "false_positive": "She is exhausted and warning you off. That is allowed."}, {"id": "t_home", "anchor": "phrase:he was home", "indexes": "locative_slide", "tactic": "locative_evasion", "window": 1, "insight_cost": 1, "reading": "Home, not here. She placed him, not herself, and she did it before you asked.", "false_positive": "People say home for here. It is the ordinary word."}], "choices_add": [{"id": "a1_call_home", "requires_tell": "t_home", "text": "He was home. You did not say you were. Where were you?", "type": "call", "calls_tactic": "locative_evasion", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a4"}, {"id": "a1_call_preempt", "requires_tell": "t_preempt", "text": "Nobody asked you to cry. Why is that the first thing in the room?", "type": "call", "calls_tactic": "preemptive_shaming", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a3"}]}, "a2": {"line": "Then have it. He was home, we ate, I washed up. Ask the neighbour. Ask the man downstairs.", "tells": [{"id": "t_ring", "anchor": "gesture:thumb across the ring", "indexes": "self_soothing", "tactic": "deception_marker", "window": 1, "insight_cost": 1, "reading": "The thumb goes across the ring on the word home, the same as last time.", "false_positive": "A widow touching a ring. Eleven days."}, {"id": "t_offload", "anchor": "phrase:Ask the neighbour", "indexes": "verification_offload", "tactic": "deflect_to_absent", "window": 1, "insight_cost": 1, "reading": "She is sending you to people who were not in this kitchen.", "false_positive": "A reasonable person offers corroboration."}]}, "a4": {"line_by_state": [{"if": "trust>=55", "line": "[The cigarette goes down on the saucer and stays.] Ask me the question you came with.", "reveals": "last_person"}, {"if": "trust>=35", "line": "I was not fooled. I was busy. Everyone keeps getting those two confused."}, {"else": true, "line": "My husband was home. Write it down or do not."}]}, "a6": {"line_by_state": [{"if": "revealed:photograph && trust>=65", "line": "In September a man sat where you are. He asked how I would describe a night in the autumn. He did not say which night.", "reveals": "she_was_asked"}, {"else": true, "line": "It went up in September. I thought you had sent it. He said four of you agreed something, and one kept it."}], "choices_add": [{"id": "a6_who", "condition": "revealed:she_was_asked", "text": "Not the face. What did he do with his hands?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a7"}]}, "a7": {"line_by_state": [{"if": "revealed:she_was_asked", "line": "He turned a lighter over and over and he did not smoke. [She looks at him. First time tonight.] He is in that photograph."}, {"if": "trust>=60", "line": "[She looks at him. First time tonight.] They will ask what he was like. I will have to say I do not know. That will be true."}, {"else": true, "line": "He did not say which one. He said you would know, and that you would come here first."}]}}, "debrief_add": {"tells": ["t_preempt", "t_offload"], "hidden_objection": "she_was_asked"}};
+</script>
+<script>
+/* ===================== ENGINE ===================== */
+const $=id=>document.getElementById(id);
+let R, S;
+
+function mergeOverlay(base, ov){
+  const r = JSON.parse(JSON.stringify(base));
+  r.mode = ov.mode;
+  r.clean_requires = ov.clean_requires || [];
+  (ov.hidden_objection_layers_add||[]).forEach(l=>r.hidden_objection_layers.push(l));
+  for(const [nid,patch] of Object.entries(ov.patch_nodes||{})){
+    const n = r.nodes[nid]; if(!n) continue;
+    for(const [k,v] of Object.entries(patch)){
+      if(k==="choices_add"){ n.choices=(n.choices||[]).concat(v); }
+      else if(k==="line_by_state"){ delete n.line; n.line_by_state=v; }
+      else if(k==="line"){ delete n.line_by_state; n.line=v; }
+      else n[k]=v;
+    }
+  }
+  const w = ov.tell_window_default||1;
+  Object.values(r.nodes).forEach(n=>(n.tells||[]).forEach(t=>t.window=Math.min(t.window??3,w)));
+  const d = ov.debrief_add||{};
+  (d.tells||[]).forEach(t=>r.debrief.tells.push(t));
+  if(d.hidden_objection) r.debrief.hidden_objection.push(d.hidden_objection);
+  return r;
+}
+
+function evalCond(expr){
+  if(!expr) return true;
+  return String(expr).split("&&").every(part=>{
+    const p = part.trim();
+    let m = p.match(/^revealed:(\w+)$/);           if(m) return S.revealed.has(m[1]);
+    m = p.match(/^trust\s*(>=|<=|>|<)\s*(\d+)$/);
+    if(m){ const t=S.trust, v=+m[2];
+      return m[1]===">="?t>=v:m[1]==="<="?t<=v:m[1]===">"?t>v:t<v; }
+    m = p.match(/^call:(\w+)$/);                   if(m) return S.flags.has("call:"+m[1]);
+    return true;
+  });
+}
+
+function resolveLine(node){
+  if(node.line_by_state){
+    for(const o of node.line_by_state){
+      if(o.else || evalCond(o.if)) return o;
+    }
+  }
+  return node;
+}
+
+function newGame(mode){
+  R = mode==="hard" ? mergeOverlay(MEDIUM, HARD) : JSON.parse(JSON.stringify(MEDIUM));
+  if(mode!=="hard") R.clean_requires = [];
+  const tr = mode==="hard" ? 25 : 35;
+  S = { mode, node:R.start, turn:0, trust:tr, fear:20, integrity:10,
+        insight:0, craft:0, edge:0, looks:4,
+        revealed:new Set(), flags:new Set(), seenObjects:new Set(),
+        readTells:new Set(), offeredTells:new Set(), active:new Map(),
+        ended:false, end:null, facing:false, smoking:true };
+  $("frame").innerHTML = SCENE;
+  startClock();
+  enter(R.start);
+}
+
+function startClock(){
+  const tick = ()=>{
+    const now = new Date();
+    const slow = new Date(now.getTime() - 4*60*1000);
+    let h = 23, m = 0 + (slow.getSeconds()%60===0?0:0);
+    // fixed story time 23:00, four minutes slow => shows 22:56, second hand real
+    const sec = slow.getSeconds();
+    const sh=$("csh"), mh=$("cmh"), hh=$("chh");
+    if(sh) sh.setAttribute("transform",`rotate(${sec*6} 722 96)`);
+    if(mh) mh.setAttribute("transform",`rotate(${(56/60)*360} 722 96)`);
+    if(hh) hh.setAttribute("transform",`rotate(${(22.93/12)*360} 722 96)`);
+    $("hClock").textContent = "22:56";
+  };
+  tick(); clearInterval(window._ck); window._ck=setInterval(tick,1000);
+}
+
+function enter(nid){
+  S.node = nid;
+  const node = R.nodes[nid];
+  if(node.end){ return finish(node); }
+  const opt = resolveLine(node);
+  if(node.reveals) S.revealed.add(node.reveals);
+  if(opt.reveals) S.revealed.add(opt.reveals);
+  // tells
+  (node.tells||[]).forEach(t=>{
+    if(!evalCond(t.condition)) return;
+    S.active.set(t.id,{t, dies:S.turn + (t.window??3)});
+    S.offeredTells.add(t.id);
+  });
+  // eyes / smoke staging
+  const last = nid==="a7";
+  setFacing(last && (S.trust>=60 || S.revealed.has("she_was_asked")));
+  if(S.trust>=48 && (nid==="a4"||nid==="a5"||nid==="a6"||nid==="a7")) setSmoking(false);
+  render(opt.line || node.line);
+}
+
+function setFacing(on){
+  S.facing = on;
+  const e=$("eyes"); if(e) e.className = on ? "on" : "";
+}
+function setSmoking(on){
+  S.smoking = on;
+  const g=$("smokeg"), c=$("cig");
+  if(g) g.classList.toggle("smokeoff", !on);
+  if(c) c.style.opacity = on ? 1 : .25;
+}
+
+function fmt(txt){
+  return txt.replace(/\[([^\]]+)\]/g,'<span class="st">$1</span>');
+}
+
+function render(line){
+  $("line").className="fade";
+  $("line").innerHTML = fmt(line);
+  void $("line").offsetWidth;
+  // tells
+  const tl=$("tells"); tl.innerHTML="";
+  [...S.active.entries()].forEach(([id,rec])=>{
+    if(S.turn > rec.dies) { S.active.delete(id); return; }
+    const b=document.createElement("button");
+    b.className="tell"+(S.readTells.has(id)?" read":"");
+    b.textContent = rec.t.anchor.replace(/^(phrase|gesture|object):/,"");
+    if(!S.readTells.has(id)) b.onclick=()=>readTell(id);
+    tl.appendChild(b);
+  });
+  // objects
+  const ob=$("objects"); ob.innerHTML="";
+  (R.objects||[]).forEach(o=>{
+    const b=document.createElement("button");
+    b.className="obj"+(S.seenObjects.has(o.id)?" seen":"");
+    b.textContent=o.label;
+    if(!S.seenObjects.has(o.id)) b.onclick=()=>examine(o.id);
+    ob.appendChild(b);
+  });
+  hookScene();
+  // choices
+  const cs=$("choices"); cs.innerHTML="";
+  available().forEach(c=>{
+    const b=document.createElement("button");
+    b.className="ch"+(c.type==="call"?" call":"")+(c.skull?" sk":"");
+    const tag = c.type==="call" ? "call &mdash; name the tactic"
+              : c.skull ? "this one is not clean" : c.type.replace(/_/g," ");
+    b.innerHTML=`<span class="tag">${tag}</span>${c.text}`;
+    b.onclick=()=>choose(c);
+    cs.appendChild(b);
+  });
+  $("hI").textContent=S.insight; $("hC").textContent=S.craft; $("hE").textContent=S.edge;
+}
+
+function hookScene(){
+  const map={obj_photo:"photo",obj_clock:"clockg",obj_cup:"cup",obj_ring:"ring"};
+  for(const [oid,gid] of Object.entries(map)){
+    const g=$(gid); if(!g) continue;
+    if(S.seenObjects.has(oid)){ g.classList.remove("hot"); g.onclick=null; }
+    else { g.classList.add("hot"); g.onclick=()=>examine(oid); }
+  }
+}
+
+function available(){
+  const node=R.nodes[S.node];
+  return (node.choices||[]).filter(c=>{
+    if(c.condition && !evalCond(c.condition)) return false;
+    if(c.requires_tell && !S.readTells.has(c.requires_tell)) return false;
+    if(c.requires_object && !S.seenObjects.has(c.requires_object)) return false;
+    return true;
+  });
+}
+
+function readTell(id){
+  const rec=S.active.get(id); if(!rec) return;
+  S.readTells.add(id);
+  const t=rec.t;
+  let txt = t.reading;
+  if(S.mode!=="hard" && t.false_positive) txt += "  —  Or: " + t.false_positive;
+  $("note").innerHTML = fmt(txt);
+  render(currentLine());
+}
+
+function examine(oid){
+  const o=(R.objects||[]).find(x=>x.id===oid); if(!o) return;
+  if(S.looks < (o.insight_cost||0)){ $("note").textContent="No looks left in this room."; return; }
+  S.looks -= (o.insight_cost||0);
+  S.seenObjects.add(oid);
+  $("note").innerHTML = fmt(o.reveals_text);
+  if(o.grants_tell){
+    const t = findTell(o.grants_tell);
+    if(t){ S.active.set(t.id,{t,dies:S.turn+3}); S.offeredTells.add(t.id); }
+  }
+  render(currentLine());
+}
+
+function findTell(id){
+  for(const n of Object.values(R.nodes))
+    for(const t of (n.tells||[])) if(t.id===id) return t;
+  return null;
+}
+
+function currentLine(){
+  const node=R.nodes[S.node];
+  const opt=resolveLine(node);
+  return opt.line || node.line;
+}
+
+function choose(c){
+  const d=c.deltas||{};
+  S.trust = Math.max(0, Math.min(100, S.trust + (d.trust||0)));
+  S.fear  = Math.max(0, Math.min(100, S.fear  + (d.fear||0)));
+  if(c.skull){
+    S.integrity -= (c.integrity_cost||1);
+    if(!c.detected) S.edge += 2;
+    S.flags.add("skull");
+  } else if(!c.unscored && c.truthful && c.preserves_refusal){
+    if(c.type!=="silence" || !c.unscored) S.craft += 1;
+  }
+  if(c.type==="call"){
+    const seen = S.readTells.has(c.requires_tell);
+    if(seen){ S.insight += 2; S.flags.add("call:"+c.calls_tactic); }
+    else { S.trust -= 10; }
+  }
+  if(c.targets==="hidden" && !c.skull) S.insight += 1;
+  if(c.sets_flag) S.flags.add(c.sets_flag);
+  S.turn += (c.turn_cost===0?0:1);
+  $("note").textContent="";
+  if(S.turn >= (R.turn_limit||12) && !R.nodes[c.next].end) return finish({end:"partial",
+    architect:"The hour ran out. She stops talking and waits for you to leave."});
+  enter(c.next);
+}
+
+/* ===================== DEBRIEF ===================== */
+const VIGNETTES = {
+  t_ring:`<circle cx="95" cy="80" r="26" fill="none" stroke="#c9a227" stroke-width="5"/>
+          <path d="M60 104 q34 -24 70 -4" fill="none" stroke="#8d7560" stroke-width="16"/>`,
+  t_cup:`<path d="M72 104 l6 -44 h38 l6 44z" fill="#b9b3a0"/>
+         <path d="M116 64 q16 10 0 20" fill="none" stroke="#b9b3a0" stroke-width="5"/>
+         <rect x="66" y="104" width="60" height="5" fill="#cfcbb6"/>`,
+  t_home:`<text x="95" y="86" fill="#e4ded0" font-size="26" text-anchor="middle"
+          font-family="Georgia,serif">home</text>
+          <line x1="52" y1="94" x2="138" y2="94" stroke="#8e2b22" stroke-width="2"/>`,
+  t_fridge:`<rect x="58" y="30" width="74" height="96" fill="#55523f"/>
+            <rect x="68" y="52" width="54" height="34" fill="#6e6a52"/>
+            <g fill="#2c2a20"><rect x="76" y="60" width="6" height="20"/><rect x="88" y="58" width="6" height="22"/>
+            <rect x="100" y="60" width="6" height="20"/><rect x="110" y="59" width="6" height="21"/></g>`,
+  t_stops_smoking:`<line x1="56" y1="96" x2="116" y2="60" stroke="#d8d2c0" stroke-width="6"/>
+            <ellipse cx="95" cy="110" rx="40" ry="9" fill="#2b2b26"/>`,
+  t_cardigan:`<path d="M56 126 q4 -70 40 -78 q36 8 40 78z" fill="#5a5243"/>
+              <path d="M96 48 v78" stroke="#3c362c" stroke-width="3"/>`,
+  t_cigarette:`<line x1="60" y1="100" x2="120" y2="64" stroke="#d8d2c0" stroke-width="7"/>
+               <circle cx="122" cy="62" r="4" fill="#55504a"/>`,
+  t_preempt:`<path d="M48 78 h94" stroke="#8e2b22" stroke-width="4"/>
+             <path d="M48 96 h62" stroke="#8e2b22" stroke-width="4" opacity=".5"/>`,
+  t_offload:`<path d="M46 86 l80 0 -18 -16 m18 16 -18 16" fill="none" stroke="#9a938a" stroke-width="4"/>`,
+  t_my_husband:`<text x="95" y="88" fill="#9a938a" font-size="19" text-anchor="middle"
+            font-family="Georgia,serif">my husband</text>`
+};
+
+function finish(node){
+  S.ended=true; S.end=node.end;
+  clearInterval(window._ck);
+  if(node.end==="clean" && (R.clean_requires||[]).length){
+    if(!R.clean_requires.every(f=>S.flags.has(f))) S.end="partial";
+  }
+  const missed = [...new Set((R.debrief.tells||[]))]
+    .filter(id=>!S.readTells.has(id) && VIGNETTES[id]);
+  const veil=$("veil"); veil.classList.add("show");
+  let i=0;
+  const vig=$("vig");
+  const step=()=>{
+    if(i<missed.length){
+      vig.innerHTML = VIGNETTES[missed[i]];
+      vig.className="fade"; void vig.offsetWidth;
+      $("vcap").textContent="";
+      i++; setTimeout(step,3000);
+    } else {
+      vig.innerHTML="";
+      $("vcap").textContent = missed.length? "you walked past these" : "you missed nothing";
+      $("score").classList.add("show");
+      animate($("sI"),S.insight); animate($("sC"),S.craft); animate($("sE"),S.edge);
+      setTimeout(()=>{ $("unmeas").style.display="block"; },900);
+      setTimeout(()=>{
+        const aft = (R.debrief.afterword||{})[S.end] || "";
+        $("after").innerHTML = "<div>"+node.architect+"</div>"+(aft?"<div style='margin-top:10px'>"+aft+"</div>":"");
+        $("after").style.display="block";
+        $("vbtn").style.display="block";
+      },1700);
+    }
+  };
+  setTimeout(step,2000);
+}
+
+function animate(el,to){
+  let v=0; const t=setInterval(()=>{ v++; el.textContent=v; if(v>=to) clearInterval(t); },90);
+  if(to===0) el.textContent="0";
+}
+
+window.__dbg=()=>({end:S.end,insight:S.insight,craft:S.craft,edge:S.edge,integrity:S.integrity,trust:S.trust,flags:[...S.flags],revealed:[...S.revealed]});
+
+/* ===================== BOOT ===================== */
+document.querySelectorAll("#modes button").forEach(b=>{
+  b.onclick=()=>{ $("title").style.display="none"; newGame(b.dataset.m); };
+});
+$("vbtn").onclick=()=>{
+  $("veil").classList.remove("show");
+  $("score").classList.remove("show");
+  $("unmeas").style.display="none"; $("after").style.display="none"; $("vbtn").style.display="none";
+  $("title").style.display="flex";
+};
+</script>
+</body>
+</html>

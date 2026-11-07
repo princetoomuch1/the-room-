@@ -1,0 +1,8 @@
+{
+  "id": "radu_petrescu",
+  "name": "Radu Petrescu",
+  "archetype": "reluctant_witness",
+  "contacts": [],
+  "traits": {"C":45,"A":60,"N":70,"trust":25,"fear":70,"comprehension":65,"liberty":75,"loyalty":40},
+  "soul_sheet": "docs/02a_soul_sheets_antwerp.md"
+}

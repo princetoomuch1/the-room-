@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tell.schema.json",
+  "title": "Tell",
+  "type": "object",
+  "required": [
+    "id",
+    "anchor",
+    "indexes",
+    "window",
+    "insight_cost",
+    "reading"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^t_"
+    },
+    "anchor": {
+      "type": "string",
+      "description": "phrase:<text> or gesture:<description> or line"
+    },
+    "indexes": {
+      "type": "string"
+    },
+    "tactic": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "window": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "insight_cost": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reading": {
+      "type": "string"
+    },
+    "false_positive": {
+      "type": "string",
+      "description": "Benign reading. Removed in brutal mode."
+    },
+    "condition": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

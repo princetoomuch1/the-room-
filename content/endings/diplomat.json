@@ -1,0 +1,22 @@
+{
+  "id": "diplomat",
+  "title": "The Diplomat",
+  "selection": {
+    "priority": 4,
+    "rule": "integrity>=8 && all rooms clean or partial"
+  },
+  "prose_ref": "docs/06_endings.md#the-diplomat",
+  "conditional_lines": [
+    {
+      "when": "room partial",
+      "replace": "<npc paragraph>",
+      "with": "NPC's Partial epilogue from Soul Sheet"
+    },
+    {
+      "when": "imran partial",
+      "replace": "<imran paragraph>",
+      "with": "Imran Shah is okay. He called someone two days later than he said he would. You think about the two days."
+    }
+  ],
+  "crisis_resources_visible": true
+}

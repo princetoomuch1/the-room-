@@ -1,0 +1,19 @@
+{
+  "id": "ramesh_deshpande",
+  "name": "Ramesh Deshpande",
+  "archetype": "wounded_king",
+  "contacts": [
+    "hemant_joshi"
+  ],
+  "traits": {
+    "narc_vulnerable": 65,
+    "N": 65,
+    "A": 50,
+    "trust": 50,
+    "shame_proneness": 70,
+    "comprehension": 75,
+    "liberty": 55,
+    "cautiousness": 60
+  },
+  "soul_sheet": "docs/02_soul_sheets.md"
+}

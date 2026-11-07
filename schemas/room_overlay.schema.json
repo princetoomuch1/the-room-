@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "room_overlay.schema.json",
+  "title": "Room overlay (hard)",
+  "type": "object",
+  "required": [
+    "base",
+    "mode"
+  ],
+  "properties": {
+    "base": {
+      "type": "string"
+    },
+    "mode": {
+      "const": "hard"
+    },
+    "tell_window_default": {
+      "type": "integer"
+    },
+    "npc_trait_overrides": {
+      "type": "object"
+    },
+    "patch_nodes": {
+      "type": "object"
+    },
+    "add_nodes": {
+      "type": "object"
+    },
+    "hidden_objection_layers_add": {
+      "type": "array"
+    },
+    "clean_requires": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "second_delayed_cost": {
+      "type": "object"
+    }
+  }
+}

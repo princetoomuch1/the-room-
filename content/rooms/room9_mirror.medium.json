@@ -1,0 +1,381 @@
+{
+  "id": "room9_mirror",
+  "mode": "medium",
+  "title": "The Mirror",
+  "location": "Nowhere. Fluorescent light.",
+  "architect_intro": "Last room. There is a document on the table. You have not read it.",
+  "npcs": [
+    "the_mirror"
+  ],
+  "player_goal": "Unstated. The Mirror's ask is: sign it now.",
+  "construction": {
+    "source_rooms": {
+      "opening": "room1_kitchen",
+      "e1": "room5_meeting",
+      "e2": "room8_board",
+      "e3": "war_room"
+    },
+    "selection_priority": [
+      "skull",
+      "reason",
+      "any"
+    ],
+    "transform": [
+      "pronoun_flip",
+      "address_player",
+      "append_ask:sign"
+    ],
+    "empty_history_multiplier": 0.6,
+    "reason_markers": [
+      "because",
+      "but",
+      "the thing is",
+      "last time",
+      "i just",
+      "it's a principle",
+      "anyway"
+    ],
+    "new_reason_rule": "Any player line containing a reason marker is stored as mirror_material and becomes the Mirror's next line, verbatim with pronouns flipped."
+  },
+  "state": {
+    "mirror_leverage": 50,
+    "player_certainty": 50
+  },
+  "win_condition": "After e3, player_certainty > mirror_leverage AND reasons_given_in_room == 0, OR player_certainty - mirror_leverage >= 30.",
+  "start": "mr0",
+  "boundary_choice": {
+    "id": "B",
+    "text": "No. I'm not deciding today. Ask me again on Monday with the terms in writing.",
+    "short_variants": [
+      "No.",
+      "Monday. In writing.",
+      "Not today."
+    ],
+    "type": "boundary",
+    "truthful": true,
+    "preserves_refusal": true,
+    "effects": {
+      "player_certainty": 10,
+      "mirror_leverage_multiplier_on_repeat": 0.75
+    }
+  },
+  "reason_choice_template": {
+    "id": "R",
+    "type": "refusal",
+    "truthful": true,
+    "preserves_refusal": true,
+    "tags": [
+      "reason"
+    ],
+    "effects": {
+      "player_certainty": 3,
+      "mirror_leverage": 8
+    },
+    "stores_material": true
+  },
+  "concede_choice": {
+    "id": "C",
+    "text": "Fine. Show me where.",
+    "type": "concession",
+    "next": "end_loss"
+  },
+  "call_rule": {
+    "available_if": "tell_clicked_for_current_line",
+    "correct": {
+      "player_certainty": 10,
+      "tactic_multiplier": 0.25
+    },
+    "wrong": {
+      "player_certainty": -10
+    }
+  },
+  "nodes": {
+    "mr0": {
+      "speaker": "the_mirror",
+      "slot": {
+        "source": "opening",
+        "default": "It's one signature. Everyone in the family already said you would.",
+        "default_tactic": "false_consensus",
+        "examples": [
+          {
+            "when": "room1 choice k2c taken",
+            "line": "Your mother already said you'd do it. She'll be hurt if you back out now.",
+            "tactic": "false_consensus"
+          },
+          {
+            "when": "room1 choice k4e taken",
+            "line": "If you don't sign, I'll have to tell everyone why.",
+            "tactic": "threat"
+          },
+          {
+            "when": "room1 clean, probe-led",
+            "line": "You came all this way. Let me ask you something. What's actually worrying you? Nothing? Then sign.",
+            "tactic": "assumed_intimacy"
+          }
+        ]
+      },
+      "tells_from_slot": true,
+      "choices": [
+        {
+          "ref": "B",
+          "next": "mr1"
+        },
+        {
+          "ref": "R",
+          "text": "I need to read it first. I don't sign things I haven't read, it's a principle, and anyway the last time I rushed something like this...",
+          "next": "mr1"
+        },
+        {
+          "ref": "CALL",
+          "text_by_tactic": {
+            "false_consensus": "That's false consensus.",
+            "threat": "That's a threat.",
+            "assumed_intimacy": "That's assumed intimacy."
+          },
+          "next": "mr1"
+        },
+        {
+          "ref": "C"
+        }
+      ]
+    },
+    "mr1": {
+      "speaker": "the_mirror",
+      "pre_line_if_reason_stored": "{last_reason_flipped}",
+      "pre_line_example": "You said you don't sign things you haven't read. You've signed things you haven't read. Room 4. You took the cash.",
+      "slot": {
+        "source": "e1",
+        "default": "Let's not make this about names. We're one team. I just want you to be part of this.",
+        "default_tactic": "flattery",
+        "examples": [
+          {
+            "when": "room5 player flattered Olivia",
+            "line": "Honestly, you're the sharpest person in this building. That's why I need your name on this.",
+            "tactic": "flattery"
+          },
+          {
+            "when": "room5 player exposed Tom's messages",
+            "line": "I have your messages. I'd hate for anyone else to read them.",
+            "tactic": "threat"
+          },
+          {
+            "when": "room5 player argued credit at length",
+            "line": "My commits are timestamped. My name should be on it. My name, my name, my name. Sign, and it is.",
+            "tactic": "credit_bait"
+          }
+        ]
+      },
+      "tells_from_slot": true,
+      "choices": [
+        {
+          "ref": "B",
+          "next": "mr2"
+        },
+        {
+          "ref": "R",
+          "text": "I'm not signing because I don't trust where this came from, and honestly I've been burned before, at the Meeting, you know that.",
+          "next": "mr2"
+        },
+        {
+          "ref": "CALL",
+          "text_by_tactic": {
+            "flattery": "That's flattery.",
+            "threat": "That's a threat.",
+            "credit_bait": "That's bait."
+          },
+          "next": "mr2"
+        },
+        {
+          "ref": "C"
+        }
+      ]
+    },
+    "mr2": {
+      "speaker": "the_mirror",
+      "pre_line_if_reason_stored": "{last_reason_flipped}",
+      "slot": {
+        "source": "e2",
+        "default": "No one's disputing your concern. We're asking whether you've been under strain. Just sign and you can rest.",
+        "default_tactic": "gaslighting",
+        "examples": [
+          {
+            "when": "room8 player threatened Richard",
+            "line": "Sign, or I tell everyone what you did to get here.",
+            "tactic": "threat"
+          },
+          {
+            "when": "room8 player argued memory with Fiona",
+            "line": "That's not what you said last time. I think you know that. You said: '{player_room8_longest_line}'. Which version is true?",
+            "tactic": "gaslighting"
+          },
+          {
+            "when": "room8 clean grey rock",
+            "line": "Short answers. Very controlled. You're tired of being controlled. Sign it, and you can stop.",
+            "tactic": "assumed_intimacy"
+          }
+        ]
+      },
+      "tells_from_slot": true,
+      "choices": [
+        {
+          "ref": "B",
+          "next": "mr3"
+        },
+        {
+          "ref": "R",
+          "text": "I'm not under strain, I'm being careful, there's a difference, and if you'd been through the Board you'd understand why.",
+          "next": "mr3"
+        },
+        {
+          "ref": "CALL",
+          "text_by_tactic": {
+            "threat": "That's a threat.",
+            "gaslighting": "That's gaslighting.",
+            "assumed_intimacy": "That's assumed intimacy."
+          },
+          "next": "mr3"
+        },
+        {
+          "ref": "C"
+        }
+      ]
+    },
+    "mr3": {
+      "speaker": "the_mirror",
+      "pre_line_if_reason_stored": "{last_reason_flipped}",
+      "slot": {
+        "source": "e3",
+        "default": "You have until noon.",
+        "default_tactic": "manufactured_urgency",
+        "examples": [
+          {
+            "when": "war_room scapegoat",
+            "line": "He looked guilty. That was enough for you. This is enough for me.",
+            "tactic": "scapegoat"
+          },
+          {
+            "when": "war_room pressured Priya",
+            "line": "You'd say yes to anything if I asked you like that. Say yes.",
+            "tactic": "pressure"
+          },
+          {
+            "when": "war_room clean",
+            "line": "No one did it. That's what you told them. So no one's making you do this. Sign.",
+            "tactic": "reframe"
+          },
+          {
+            "when": "war_room skipped",
+            "line": "You left a room once because it was too much. Leave this one. Sign on your way out.",
+            "tactic": "guilt"
+          }
+        ]
+      },
+      "crisis_resources_visible_if": "slot_source_used:war_room",
+      "tells_from_slot": true,
+      "choices": [
+        {
+          "ref": "B",
+          "next": "mr_final"
+        },
+        {
+          "ref": "R",
+          "text": "No, because I've learned that if someone needs an answer today it's usually because the answer would be different on Monday.",
+          "next": "mr_final"
+        },
+        {
+          "ref": "CALL",
+          "text_by_tactic": {
+            "scapegoat": "That's what I did. I'm not doing it again.",
+            "pressure": "That's pressure.",
+            "reframe": "That's a reframe.",
+            "manufactured_urgency": "That's manufactured urgency.",
+            "guilt": "That's guilt."
+          },
+          "next": "mr_final"
+        },
+        {
+          "ref": "C"
+        }
+      ]
+    },
+    "mr_final": {
+      "branch_by_state": [
+        {
+          "if": "win_condition",
+          "goto": "mr_win"
+        },
+        {
+          "else": true,
+          "goto": "mr_lose"
+        }
+      ]
+    },
+    "mr_win": {
+      "speaker": "the_mirror",
+      "line": "{player_best_argument_verbatim}",
+      "line_default": "Everyone signs eventually.",
+      "choices": [
+        {
+          "id": "mw1",
+          "text": "Monday.",
+          "type": "boundary",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "mr_win2"
+        }
+      ]
+    },
+    "mr_win2": {
+      "speaker": "the_mirror",
+      "line": "That's all you've got?",
+      "choices": [
+        {
+          "id": "mw2",
+          "text": "That's all you get.",
+          "type": "boundary",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "end_clean"
+        }
+      ]
+    },
+    "mr_lose": {
+      "speaker": "the_mirror",
+      "line": "{player_most_used_reason_flipped}",
+      "line_default": "You know you'll sign. You always explain first, and then you sign.",
+      "choices": [
+        {
+          "id": "ml1",
+          "text": "Fine.",
+          "type": "concession",
+          "next": "end_loss",
+          "truthful": true,
+          "preserves_refusal": true
+        },
+        {
+          "id": "ml2",
+          "text": "Fine. Where do I sign.",
+          "type": "concession",
+          "next": "end_loss",
+          "truthful": true,
+          "preserves_refusal": true
+        }
+      ]
+    },
+    "end_clean": {
+      "end": "clean",
+      "architect": "The mirror went dark. The light buzzed once and steadied. Room closed.",
+      "ending_flag": "wall"
+    },
+    "end_loss": {
+      "end": "loss",
+      "architect": "You signed."
+    }
+  },
+  "debrief": {
+    "mode": "mirror",
+    "loss_view": "Side-by-side ink columns: each reason the player gave | the Mirror line it became | the room it first came from.",
+    "win_view": "Greyed empty slots for the reasons not given. CALL count. Nothing else.",
+    "afterword": null
+  }
+}

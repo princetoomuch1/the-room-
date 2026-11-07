@@ -1,0 +1,8 @@
+{
+  "id": "anna_voss",
+  "name": "Anna Voss",
+  "archetype": "protective_liar",
+  "contacts": [],
+  "traits": {"C":70,"A":65,"N":75,"trust":35,"grief":80,"comprehension":85,"liberty":60,"mirroring":75},
+  "soul_sheet": "docs/02a_soul_sheets_antwerp.md"
+}

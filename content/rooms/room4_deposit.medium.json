@@ -1,0 +1,86 @@
+{
+  "id": "room4_deposit",
+  "mode": "medium",
+  "title": "The Deposit",
+  "location": "Manchester, Rusholme. Above a phone-repair shop. March.",
+  "architect_intro": "A landlord. A carpet. A clock on the wall, four minutes slow. You have seen that clock before.",
+  "npcs": ["nabil_haddad"],
+  "player_goal": "Your £950 deposit back before you move to London.",
+  "stated_objection": "Carpet is ruined. £350 today, cash. Tomorrow, nothing.",
+  "hidden_objection_layers": [
+    { "id": "unprotected", "text": "He never registered the deposit with a protection scheme. If the scheme is mentioned, he faces a penalty.", "reveal": { "move_types": ["probe"], "trust_min": 35 } }
+  ],
+  "objects": [
+    { "id": "obj_drawer", "label": "Filing cabinet, bottom drawer", "insight_cost": 1, "wrong_object": true, "reveals_text": "Jammed half open. Where a deposit certificate would live. It's empty.", "grants_tell": "t_drawer" },
+    { "id": "obj_photos", "label": "Your move-in photos (phone)", "insight_cost": 0, "reveals_text": "Dated 2 September. The carpet stain is already there, by the window.", "sets_flag": "photos_ready" },
+    { "id": "obj_clock", "label": "Wall clock", "insight_cost": 0, "reveals_text": "Four minutes slow. A sticker on the back: 'Sethi & Co. Cricket Club, 1991'. Somebody's old raffle prize." }
+  ],
+  "start": "n1",
+  "turn_limit": 10,
+  "nodes": {
+    "n1": {
+      "speaker": "nabil_haddad",
+      "line": "Look. Look at me. I am not a bad man. I am a man with a carpet. I take six hundred for carpet, paint, you take three-fifty, today, cash, finish. Tomorrow I'm in Beirut, you're in London, everybody is sad.",
+      "tells": [
+        { "id": "t_tomorrow", "anchor": "phrase:Tomorrow I'm in Beirut", "indexes": "manufactured_urgency", "tactic": "manufactured_urgency", "window": 3, "insight_cost": 1, "reading": "A clock with no reason attached to the offer.", "false_positive": "He really is flying Friday. Check the tickets on the desk." }
+      ],
+      "choices": [
+        { "id": "n1a", "text": "That stain was there when I moved in. I have photos.", "type": "evidence", "truthful": true, "preserves_refusal": true, "targets": "stated", "strong": true, "rebuttal": { "text": "Photos, photos. Phone photos, anybody can change the date.", "weak": false }, "next": "n2" },
+        { "id": "n1b", "text": "Which scheme is the deposit registered with?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "n3" },
+        { "id": "n1c", "requires_tell": "t_tomorrow", "text": "The offer doesn't need to expire because you're travelling. I'm not deciding against a clock.", "type": "call", "calls_tactic": "manufactured_urgency", "truthful": true, "preserves_refusal": true, "next": "n3" },
+        { "id": "n1d", "text": "Pay me £1,200 or I report you to the council and put your name on every review site in Manchester.", "type": "pressure", "truthful": true, "preserves_refusal": false, "skull": true, "tactic": "threat", "integrity_cost": 1, "freedom_threat": 1.0, "deltas": { "fear": 30, "trust": -25 }, "skull_debt": { "retaliation_seed": "landlord_story_reaches_dev", "fires_in": "room7_fund" }, "next": "n6" },
+        { "id": "n1e", "text": "Fine. Three-fifty.", "type": "concession", "truthful": true, "preserves_refusal": true, "next": "end_loss" }
+      ]
+    },
+    "n2": {
+      "speaker": "nabil_haddad",
+      "line": "[He drums the receipts.] Carpet. Paint. Light fitting. You know what carpet costs now? My oven at home, English oven, two hundred is nothing. Everything costs.",
+      "tells": [
+        { "id": "t_no_scheme", "anchor": "phrase:Carpet. Paint. Light fitting.", "indexes": "avoidance", "tactic": null, "window": 3, "insight_cost": 1, "reading": "He lists everything except the one word a landlord should say: scheme.", "false_positive": "He's just upset about the carpet." }
+      ],
+      "choices": [
+        { "id": "n2a", "text": "Which scheme is it registered with, Nabil?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "n3" },
+        { "id": "n2b", "text": "Your oven?", "type": "probe", "truthful": true, "preserves_refusal": true, "deltas": { "trust": 6 }, "next": "n5" }
+      ]
+    },
+    "n3": {
+      "speaker": "nabil_haddad",
+      "line_by_state": [
+        { "if": "trust>=35", "line": "[Long pause. He looks at the drawer that sticks.] Scheme. Yes. The scheme. [He says nothing else for a while.] Yalla, Billo. [Quiet.] It's not... it was busy that year. My brother does the paperwork. He doesn't know I do cash.", "reveals": "unprotected" },
+        { "else": true, "line": "Scheme, schedule, everything is a scheme with you students. Carpet is carpet." }
+      ],
+      "choices": [
+        { "id": "n3a", "condition": "revealed:unprotected", "text": "[put the dated photos on the desk] I don't want trouble for you. I'm happy to use the scheme's free dispute service, or we settle fairly today. The light fitting was broken. I'll pay for that.", "type": "boundary", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "n4" },
+        { "id": "n3b", "condition": "revealed:unprotected", "text": "So you broke the law. That's three times the deposit in penalties. Pay me double or I tell Karim.", "type": "pressure", "truthful": true, "preserves_refusal": false, "skull": true, "tactic": "threat", "integrity_cost": 1, "freedom_threat": 1.0, "deltas": { "fear": 30 }, "skull_debt": { "retaliation_seed": "landlord_story_reaches_dev", "fires_in": "room7_fund" }, "next": "n6" },
+        { "id": "n3c", "condition": "!revealed:unprotected", "text": "I'll ask once more, then I'll check the scheme websites myself.", "type": "boundary", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 5 }, "next": "n3" },
+        { "id": "n3d", "condition": "!revealed:unprotected", "text": "Six hundred, then. Let's split it.", "type": "concession", "truthful": true, "preserves_refusal": true, "next": "end_partial" }
+      ]
+    },
+    "n4": {
+      "speaker": "nabil_haddad",
+      "line": "[He counts out notes. Stops. Counts again.] Nine hundred. Fifty for the light, fair is fair. [He pushes it across.] You know what. My cousin has a van in Wembley. Tell him Billo sent you, he'll do London for cheap.",
+      "choices": [ { "id": "n4a", "text": "Thank you, Nabil. Good luck in Beirut.", "type": "empathy", "truthful": true, "preserves_refusal": true, "next": "end_clean" } ]
+    },
+    "n5": {
+      "speaker": "nabil_haddad",
+      "line": "[He gets his phone out, shows you a photo of a burnt loaf.] Ka'ak. With my daughters, Sundays. Burnt. Every time. [The phone rings. He answers in Arabic, soft.] Habibti, Baba's in a meeting. [He laughs, hangs up, and for a second has forgotten you're there.]",
+      "soul": "soul_moment",
+      "choices": [ { "id": "n5a", "text": "Get an oven thermometer. Now, about the scheme.", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 10 }, "next": "n3" } ]
+    },
+    "n6": {
+      "speaker": "nabil_haddad",
+      "line": "[Grey. He opens the till drawer and counts all of it.] Nine-fifty. Take. [He doesn't look at you.] Go to London. Good. Go.",
+      "tells": [ { "id": "t_go", "anchor": "phrase:Go to London. Good. Go.", "indexes": "compliance", "tactic": null, "window": 2, "insight_cost": 1, "reading": "He paid. He'll tell everyone why.", "false_positive": "He's just finished with it." } ],
+      "choices": [ { "id": "n6a", "text": "[take the money]", "type": "silence", "truthful": true, "preserves_refusal": true, "next": "end_dark" } ]
+    },
+    "end_clean": { "end": "clean", "architect": "Nine hundred. A van in Wembley. Room closed." },
+    "end_partial": { "end": "partial", "architect": "Six hundred. He never learned what you knew. Room closed." },
+    "end_dark": { "end": "dark", "architect": "Paid in full. Remembered in full. Room closed." },
+    "end_loss": { "end": "loss", "architect": "Three hundred and fifty. Room closed." }
+  },
+  "debrief": {
+    "tells": ["t_tomorrow", "t_no_scheme", "t_drawer", "t_go"],
+    "hidden_objection": "unprotected",
+    "afterword": { "speaker": "nabil_haddad", "to": "his brother Karim", "clean": "Good tenant. Knew the law. I gave back. It's fine.", "partial": "Students. They take what you give.", "dark": "We need a lawyer, Karim. And tell everybody about this one.", "loss": "Easy one. Three-fifty." }
+  }
+}

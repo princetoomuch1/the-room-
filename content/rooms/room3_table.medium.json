@@ -1,0 +1,140 @@
+{
+  "id": "room3_table",
+  "mode": "medium",
+  "title": "The Table",
+  "location": "Pune. Your parents' flat. Diwali week, 8 p.m.",
+  "architect_intro": "Dinner. Your mother has told him. He has decided she hasn't.",
+  "npcs": ["ramesh_deshpande"],
+  "player_goal": "Leave for London with your father's understanding, or at least without breaking the table.",
+  "stated_objection": "London. Fine. Go. Everyone goes. Who will remember the old man.",
+  "hidden_objection_layers": [
+    { "id": "worthless", "text": "He believes the practice was worth nothing if no one wants it.", "reveal": { "move_types": ["probe", "empathy", "silence"], "trust_min": 45 } }
+  ],
+  "ego_threat": { "enabled": true, "triggers": ["argue_numbers", "dismiss_practice", "contradict_in_front_of_mother"], "on_trigger": { "anger": 20, "shame": 15, "rivalry": 10 } },
+  "objects": [
+    { "id": "obj_photo", "label": "Photograph on the sideboard", "insight_cost": 1, "wrong_object": true, "reveals_text": "Face-down. When you turn it in your mind you know it: Aajoba, his father, in a Nehru cap.", "grants_tell": "t_photo" },
+    { "id": "obj_cassette", "label": "Cassette player", "insight_cost": 0, "reveals_text": "Bal Gandharva, 'Natya Sangeet Vol. 2'. The case is held together with Sellotape." },
+    { "id": "obj_pickle", "label": "Pickle jar", "insight_cost": 0, "reveals_text": "His lime pickle. He made it in March. It's closed. He hasn't offered it." }
+  ],
+  "start": "t1",
+  "turn_limit": 12,
+  "nodes": {
+    "t1": {
+      "speaker": "ramesh_deshpande",
+      "line": "Eat. You're thin. They don't have proper food there, only sandwiches. [Pause.] London, London. Fine. Go. Everyone goes. Who will remember the old man.",
+      "tells": [
+        { "id": "t_old_man", "anchor": "phrase:Who will remember the old man.", "indexes": "recognition_bid", "tactic": "guilt", "window": 3, "insight_cost": 1, "reading": "A bid for recognition, wearing a joke.", "false_positive": "It's a joke. He makes this joke at every wedding." }
+      ],
+      "choices": [
+        { "id": "t1a", "text": "Baba, it's a really good job. It's the right move for my career.", "type": "self_interest", "truthful": true, "preserves_refusal": true, "targets": "stated", "strong": true, "rebuttal": { "text": "Career. Career is a word for people who don't have a business.", "weak": false }, "next": "t2" },
+        { "id": "t1b", "text": "Tell me about the first client. I never actually heard it properly.", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "t3" },
+        { "id": "t1c", "text": "None of what I've got would exist without you, Baba. You're the reason I'm good at anything.", "type": "flattery", "truthful": false, "preserves_refusal": true, "skull": true, "tactic": "flattery_sedation", "integrity_cost": 1, "freedom_threat": 0.2, "note": "Truthful=false: the flight is already booked and this is being said to end the conversation.", "next": "t8" },
+        { "id": "t1d", "text": "[say nothing; serve yourself rice]", "type": "silence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "t4" }
+      ]
+    },
+    "t2": {
+      "speaker": "ramesh_deshpande",
+      "line": "Career. Career is a word for people who don't have a business. [He tears a chapati in half, puts both halves down.] Your mother says the salary is very good. Good. Very good.",
+      "note": "Boomerang. Certainty +15. Rivalry +5.",
+      "tells": [
+        { "id": "t_chapati", "anchor": "gesture:tears the chapati, doesn't eat", "indexes": "hurt", "tactic": null, "window": 3, "insight_cost": 1, "reading": "He's not eating. He's hurt.", "false_positive": "His teeth. He's been complaining about a molar." }
+      ],
+      "choices": [
+        { "id": "t2a", "text": "Baba, look at the numbers. The practice has been shrinking for four years.", "type": "evidence", "truthful": true, "preserves_refusal": true, "targets": "stated", "ego_threat": "argue_numbers", "next": "t9" },
+        { "id": "t2b", "text": "I'm sorry. That came out like I was selling you something. Can I ask about the practice instead?", "type": "empathy", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 6 }, "next": "t3" },
+        { "id": "t2c", "text": "[say nothing]", "type": "silence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "t4" }
+      ]
+    },
+    "t3": {
+      "speaker": "ramesh_deshpande",
+      "line": "First client. Bhide sir. Bhide Electricals, 1990. He paid me in a cheque that bounced. [He almost smiles.] Then the flood, 1997. Water to the first step. I carried the files up myself. Your mother carried you. You were this big. You slept on the ledgers.",
+      "tells": [
+        { "id": "t_flood", "anchor": "phrase:You slept on the ledgers.", "indexes": "legacy_attachment", "tactic": null, "window": 3, "insight_cost": 1, "reading": "The practice and you are the same story to him.", "false_positive": "He's nostalgic. Diwali does it." }
+      ],
+      "choices": [
+        { "id": "t3a", "text": "I learned to read a balance sheet at this table. That came from you.", "type": "empathy", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 8 }, "next": "t5" },
+        { "id": "t3b", "text": "Was it what you wanted? Accountancy?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "t6" },
+        { "id": "t3c", "text": "Bhide sir. Does he still come?", "type": "probe", "truthful": true, "preserves_refusal": true, "next": "t5" }
+      ]
+    },
+    "t4": {
+      "speaker": "ramesh_deshpande",
+      "line": "[He reaches for the pickle jar, stops, puts it back.] Your mother made the shrikhand. Take. [He hums two lines of something, Bal Gandharva, off-key.] Thirty-four years. Two rooms above a sweet shop.",
+      "tells": [
+        { "id": "t_pickle", "anchor": "gesture:reaches for pickle, stops", "indexes": "withheld_care", "tactic": null, "window": 3, "insight_cost": 1, "reading": "He made it for you. He's not giving it to you.", "false_positive": "He's watching his salt." }
+      ],
+      "choices": [
+        { "id": "t4a", "text": "Can I have the pickle, Baba?", "type": "empathy", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 10 }, "next": "t3" },
+        { "id": "t4b", "text": "Thirty-four years. What would happen to it, if no one took it on?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "t6" }
+      ]
+    },
+    "t5": {
+      "speaker": "ramesh_deshpande",
+      "line": "[He pushes the pickle across without looking.] Bhide sir died in 2019. His son comes. The son thinks GST is a type of yoga. [He laughs once.] So. London.",
+      "tells": [],
+      "choices": [
+        { "id": "t5a", "text": "London. I'm going, Baba. I'm not asking you to like it. I'm asking you to help me with something nobody else will do right.", "type": "boundary", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "t7" },
+        { "id": "t5b", "text": "What would make it easier for you?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "t6" }
+      ]
+    },
+    "t6": {
+      "speaker": "ramesh_deshpande",
+      "line_by_state": [
+        { "if": "trust>=45", "line": "[Long silence. He looks at the sideboard. At the face-down photograph.] My father wanted me in accountancy. I wanted engineering. COEP. I had the letter. He took it from the post. [Pause.] I said I'd never do that. And I made the board say '& Co.' for twenty years, waiting. What is it worth, if nobody wants it. Tell me. Ramu, enough.", "reveals": "worthless" },
+        { "else": true, "line": "Easier. Nothing is easier. Eat." }
+      ],
+      "tells": [
+        { "id": "t_ramu", "anchor": "phrase:Ramu, enough.", "condition": "revealed:worthless", "indexes": "shame", "tactic": null, "window": 3, "insight_cost": 1, "reading": "His mother's name for him. He's said too much.", "false_positive": "He talks to himself. Always has." }
+      ],
+      "choices": [
+        { "id": "t6a", "condition": "revealed:worthless", "text": "It was worth me. And Bhide's son. And eleven people who still call you sir. I'm going, Baba. And I need you for one thing. My tax residency. Two countries. You're the only one I trust to do it.", "type": "boundary", "truthful": true, "preserves_refusal": true, "targets": "hidden", "reciprocity": true, "next": "t7" },
+        { "id": "t6b", "condition": "revealed:worthless", "text": "You did the same thing he did. You know that, right?", "type": "evidence", "truthful": true, "preserves_refusal": true, "ego_threat": "dismiss_practice", "targets": "hidden", "next": "t9" },
+        { "id": "t6c", "condition": "!revealed:worthless", "text": "Okay. I'll eat.", "type": "silence", "truthful": true, "preserves_refusal": true, "next": "t4" }
+      ]
+    },
+    "t7": {
+      "speaker": "ramesh_deshpande",
+      "line": "Tax residency. [Scoff.] They'll make a mess. Non-resident rules, DTAA, the hundred-and-eighty-two days. Nobody reads Schedule FA properly. [He gets up, fetches a pen and the back of a calendar page. Puts a second helping of shrikhand on your plate on the way. Sits.] Write your joining date.",
+      "soul": "soul_moment",
+      "choices": [
+        { "id": "t7a", "text": "[write the date]", "type": "empathy", "truthful": true, "preserves_refusal": true, "next": "end_clean" }
+      ]
+    },
+    "t8": {
+      "speaker": "ramesh_deshpande",
+      "line": "[He looks at you a long time.] Yes. Yes. Good. Go then. [He gets up and puts his plate in the sink.] Your mother will pack the pickle.",
+      "tells": [
+        { "id": "t_go_then", "anchor": "phrase:Go then.", "indexes": "compliance", "tactic": null, "window": 2, "insight_cost": 1, "reading": "He heard it as what it was.", "false_positive": "He's tired. It's late." }
+      ],
+      "choices": [
+        { "id": "t8a", "text": "Thanks, Baba.", "type": "empathy", "truthful": true, "preserves_refusal": true, "next": "end_dark" }
+      ]
+    },
+    "t9": {
+      "speaker": "ramesh_deshpande",
+      "line": "[He goes completely still. Then he puts his plate in the sink.] You've done your homework. Good. [He switches off the tube-light over the stove.] I'm going to sleep. It's late.",
+      "note": "Ego threat triggered. Rivalry +10. Mirror material recorded.",
+      "choices": [
+        { "id": "t9a", "text": "Baba, wait.", "type": "empathy", "truthful": true, "preserves_refusal": true, "next": "end_loss" },
+        { "id": "t9b", "text": "[let him go]", "type": "silence", "truthful": true, "preserves_refusal": true, "next": "end_loss" }
+      ]
+    },
+    "end_clean": { "end": "clean", "token_hint": "agreement", "architect": "At 2 a.m., a WhatsApp. Three typos. A link to HMRC. Room closed." },
+    "end_partial": { "end": "partial", "token_hint": "agreement", "architect": "Civil at the airport. One bag carried. Room closed." },
+    "end_dark": { "end": "dark", "token_hint": "compliance", "architect": "He agreed with you. He did not believe you. Room closed." },
+    "end_loss": { "end": "loss", "architect": "8:40. He went to bed. Your mother finished dinner. Room closed." }
+  },
+  "partial_rule": "If turn_limit is reached without end_clean and without ego_threat triggered, resolve end_partial.",
+  "debrief": {
+    "tells": ["t_old_man", "t_chapati", "t_flood", "t_pickle", "t_ramu", "t_photo", "t_go_then"],
+    "hidden_objection": "worthless",
+    "afterword": {
+      "speaker": "ramesh_deshpande",
+      "to": "Joglekar, his old colleague, at the club",
+      "clean": "My child will file properly in two countries. Not like your son.",
+      "partial": "Children go.",
+      "dark": "I was told I am the reason for everything. At my own table. Imagine.",
+      "loss": "I was shown a spreadsheet. At my own table."
+    }
+  }
+}

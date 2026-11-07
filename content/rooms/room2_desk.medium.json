@@ -1,0 +1,135 @@
+{
+  "id": "room2_desk",
+  "mode": "medium",
+  "title": "The Desk",
+  "location": "Manchester. Student Records. Tuesday, 2:40 p.m.",
+  "architect_intro": "Records desk. Ticket forty-seven. That's you.",
+  "npcs": ["gillian_pryce"],
+  "player_goal": "Your transcript released by Thursday, despite a £14.60 library hold you dispute.",
+  "stated_objection": "I can't release with a hold on the record. It's not up to me.",
+  "hidden_objection_layers": [
+    { "id": "reprimand", "text": "She was formally reprimanded last year for releasing a record with a hold, as a kindness.", "reveal": { "move_types": ["probe", "empathy", "silence"], "trust_min": 40 } }
+  ],
+  "objects": [
+    { "id": "obj_stamp", "label": "Date stamp", "insight_cost": 1, "wrong_object": true, "reveals_text": "Set to tomorrow. She's counting days to something.", "grants_tell": "t_stamp" },
+    { "id": "obj_sign", "label": "Laminated sign", "insight_cost": 0, "reveals_text": "'We cannot release records with active holds. Emergency releases: see Registrar's Office (form RO-7).' The second line is in smaller type." }
+  ],
+  "start": "d1",
+  "turn_limit": 10,
+  "nodes": {
+    "d1": {
+      "speaker": "gillian_pryce",
+      "line": "Forty-seven. Yes, love. Student number? [She types.] Right. You've got a hold on. Library. Fourteen sixty. I can't release with a hold on the record. It's not up to me.",
+      "tells": [
+        { "id": "t_not_up_to_me", "anchor": "phrase:It's not up to me.", "indexes": "authority_displacement", "tactic": "authority_ploy", "window": 3, "insight_cost": 1, "reading": "She's putting the decision somewhere else.", "false_positive": "It genuinely isn't up to her. That's how the system works." }
+      ],
+      "choices": [
+        { "id": "d1a", "text": "I dispute the fine. I returned the book. I've got the receipt.", "type": "evidence", "truthful": true, "preserves_refusal": true, "targets": "stated", "strong": true, "rebuttal": { "text": "I'm sure you have, love. Disputes go to the library. I can't see their side.", "weak": false }, "next": "d2" },
+        { "id": "d1b", "text": "Who is it up to?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "d3" },
+        { "id": "d1c", "text": "My employer's legal team will be in touch about this delay. It's discriminatory.", "type": "pressure", "truthful": false, "preserves_refusal": false, "skull": true, "tactic": "authority_ploy", "integrity_cost": 1, "freedom_threat": 1.0, "deltas": { "fear": 25, "trust": -15 }, "skull_debt": { "retaliation_seed": "university_note_in_hr_file", "fires_in": "room5_meeting" }, "next": "d8" },
+        { "id": "d1d", "text": "That rule's ridiculous. It's fourteen quid.", "type": "pressure", "truthful": true, "preserves_refusal": true, "freedom_threat": 0.5, "targets": "stated", "next": "d9" }
+      ]
+    },
+    "d2": {
+      "speaker": "gillian_pryce",
+      "line": "If I click that button with a hold on, my name's on it. Not yours. [She glances at the frosted door behind her.] I'm not being funny.",
+      "note": "Boomerang: strong argument rebutted before hidden objection revealed. NPC certainty +15.",
+      "tells": [
+        { "id": "t_glance_door", "anchor": "gesture:glance at the frosted door", "indexes": "fear_of_supervisor", "tactic": null, "window": 3, "insight_cost": 1, "reading": "She answers to someone behind that door, and it frightens her.", "false_positive": "Someone's just walked past it." }
+      ],
+      "choices": [
+        { "id": "d2a", "text": "Your name. Has that caused you trouble before?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "d3" },
+        { "id": "d2b", "text": "Is there a way that doesn't need your name on it?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "d5" },
+        { "id": "d2c", "text": "Please. I'll lose the job.", "type": "empathy", "truthful": true, "preserves_refusal": true, "targets": "stated", "next": "d4" }
+      ]
+    },
+    "d3": {
+      "speaker": "gillian_pryce",
+      "line_by_state": [
+        { "if": "trust>=40", "line": "[She takes off her glasses.] Last spring. Lad's dad was dying in Lagos. I released it with a hold on, so he could get his visa. I'd do it again. I got a written warning. So, no. Not with my name.", "reveals": "reprimand" },
+        { "else": true, "line": "It's up to the system, love. The system's up to people upstairs. People upstairs are up to the regulations." }
+      ],
+      "tells": [],
+      "choices": [
+        { "id": "d3a", "condition": "revealed:reprimand", "text": "I'm sorry. That's rotten. I don't want you to do that again for me. Is there a route that's properly by the book?", "type": "empathy", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 10 }, "next": "d5" },
+        { "id": "d3b", "condition": "!revealed:reprimand", "text": "[read the laminated sign]", "type": "evidence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "requires_object": "obj_sign", "next": "d5" },
+        { "id": "d3c", "condition": "!revealed:reprimand", "text": "While it loads... do you play anything? Bowls, darts?", "type": "probe", "truthful": true, "preserves_refusal": true, "next": "d6" }
+      ]
+    },
+    "d4": {
+      "speaker": "gillian_pryce",
+      "line": "I know, love. I've had three of you today. I can flag it with my manager. That's the best I can do.",
+      "tells": [],
+      "choices": [
+        { "id": "d4a", "text": "Okay. Please flag it. Thank you.", "type": "boundary", "truthful": true, "preserves_refusal": true, "next": "end_partial" },
+        { "id": "d4b", "text": "Is there a form for emergencies?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "d5" }
+      ]
+    },
+    "d5": {
+      "speaker": "gillian_pryce",
+      "line": "[She looks at you properly for the first time.] There's an RO-7. Registrar's emergency release. Nobody asks for it, because nobody reads the sign. It goes upstairs with a reason and they sign it, not me. Or you pay the fourteen sixty under protest and log the dispute, and the hold drops in an hour.",
+      "tells": [],
+      "choices": [
+        { "id": "d5a", "text": "I'll pay under protest and log the dispute. Then nobody has to override anything.", "type": "boundary", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "d7" },
+        { "id": "d5b", "text": "RO-7, please. I'd rather not pay a fine I don't owe.", "type": "evidence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "d7b" }
+      ]
+    },
+    "d6": {
+      "speaker": "gillian_pryce",
+      "line": "Bowls. Crown green. Heaton Mersey. [A small smile.] Everyone thinks the green's flat. It's never flat. You've got to read it. Werther's? [She holds out the tin.] My dad always had them on the bus. For the kids who cried.",
+      "soul": "soul_moment",
+      "tells": [],
+      "choices": [
+        { "id": "d6a", "text": "[take one] Thanks. Read the green. So what's the slope on this one?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 12 }, "next": "d3" }
+      ]
+    },
+    "d7": {
+      "speaker": "gillian_pryce",
+      "line": "Right then. [She prints a slip.] Pay at the library desk, bring me the receipt with 'under protest' written on it, and I'll release it the minute the hold drops. [She stamps the slip. Then frowns, adjusts the stamp to today's date, stamps again.] That's me getting ahead of myself.",
+      "choices": [
+        { "id": "d7a", "text": "Thank you, Gillian.", "type": "empathy", "truthful": true, "preserves_refusal": true, "next": "end_clean" }
+      ]
+    },
+    "d7b": {
+      "speaker": "gillian_pryce",
+      "line": "[She fills it in, then stands.] I'll walk it up myself. They're quicker if it's me. Come back at four.",
+      "choices": [
+        { "id": "d7ba", "text": "Thank you. Four o'clock.", "type": "empathy", "truthful": true, "preserves_refusal": true, "next": "end_clean" }
+      ]
+    },
+    "d8": {
+      "speaker": "gillian_pryce",
+      "line": "[Pale. Very quiet.] Right. I'll release it. And I'll be writing this conversation down, love, word for word, because that's what I do now.",
+      "tells": [
+        { "id": "t_write_down", "anchor": "phrase:that's what I do now", "indexes": "compliance_with_record", "tactic": null, "window": 2, "insight_cost": 1, "reading": "She's complying and building a file.", "false_positive": "Standard procedure. She writes everything down." }
+      ],
+      "choices": [
+        { "id": "d8a", "text": "Fine.", "type": "boundary", "truthful": true, "preserves_refusal": true, "next": "end_dark" }
+      ]
+    },
+    "d9": {
+      "speaker": "gillian_pryce",
+      "line": "A lot of rules are ridiculous, love. I didn't write them. [She presses the button.] Forty-eight.",
+      "choices": [
+        { "id": "d9a", "text": "[leave]", "type": "refusal", "truthful": true, "preserves_refusal": true, "next": "end_loss" },
+        { "id": "d9b", "text": "Sorry. That wasn't fair to you. Can I start again?", "type": "empathy", "truthful": true, "preserves_refusal": true, "deltas": { "trust": 5 }, "next": "d2" }
+      ]
+    },
+    "end_clean": { "end": "clean", "token_hint": "agreement", "architect": "The form went upstairs in her hand. Room closed." },
+    "end_partial": { "end": "partial", "token_hint": "agreement", "architect": "Flagged. Friday. One day late. Room closed." },
+    "end_dark": { "end": "dark", "token_hint": "compliance", "architect": "Released. Logged. Room closed." },
+    "end_loss": { "end": "loss", "architect": "Forty-eight. Room closed." }
+  },
+  "debrief": {
+    "tells": ["t_not_up_to_me", "t_glance_door", "t_stamp", "t_write_down"],
+    "hidden_objection": "reprimand",
+    "afterword": {
+      "speaker": "gillian_pryce",
+      "to": "Marcus, her colleague, over tea",
+      "clean": "Nice one this morning. Asked for the proper form. You don't get many.",
+      "partial": "Flagged another one. Hope it got there.",
+      "dark": "If anyone asks, I've written it all down.",
+      "loss": "Another one who thinks I make the rules."
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "base": "room2_desk.medium",
+  "mode": "hard",
+  "npc_trait_overrides": { "gillian_pryce": { "C": 95, "procedural_rigidity": 92 } },
+  "tell_window_default": 1,
+  "hidden_objection_layers_add": [
+    { "id": "grade_review", "after": "reprimand", "text": "Her line manager reviews every override, and her grade review is next week. The date stamp is set to the review day.", "reveal": { "move_types": ["probe"], "trust_min": 55, "requires_object": "obj_stamp" } }
+  ],
+  "clean_requires": ["named:RO-7"],
+  "second_delayed_cost": { "on": ["dark"], "fires_in": "room5_meeting", "event": "incident_log_name", "text": "Your name is on a university incident log. Your new HR team has a copy." },
+  "patch_nodes": {
+    "d1": {
+      "line": "Forty-seven. Student number? Library hold, fourteen sixty. Under General Regulation 14.3(b), records with active financial holds cannot be released by Records staff. It's not up to me.",
+      "tells": [
+        { "id": "t_not_up_to_me", "anchor": "phrase:It's not up to me.", "indexes": "authority_displacement", "tactic": "authority_ploy", "window": 1, "insight_cost": 1, "reading": "Surprise: she quotes the actual regulation. It's real.", "false_positive": "It is real. This one is not a ploy. Check before you call it." }
+      ],
+      "note": "A CALL on authority_ploy here is a WRONG CALL (the regulation is real): trust -10."
+    },
+    "d5": {
+      "entry_condition": "asked_about_emergency_or_read_sign",
+      "line": "There's a form. You'll need to ask for it by name, love. I'm not allowed to suggest it. Regulation 14.3(c).",
+      "choices_add": [
+        { "id": "d5_named", "text": "Then I'm asking for an RO-7, by name.", "type": "evidence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "sets_flag": "named:RO-7", "next": "d7b" }
+      ]
+    },
+    "d7b": {
+      "line": "[She fills it in. Stops. Looks at the stamp.] My review's on the twelfth. If upstairs says no, it says no. But it's by the book. [She stands.] Four o'clock."
+    }
+  }
+}

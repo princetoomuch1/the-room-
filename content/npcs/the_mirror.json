@@ -1,0 +1,8 @@
+{
+  "id": "the_mirror",
+  "name": "the Mirror",
+  "archetype": "mirror",
+  "contacts": [],
+  "traits": {},
+  "soul_sheet": "docs/02_soul_sheets.md"
+}

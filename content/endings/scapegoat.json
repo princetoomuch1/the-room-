@@ -1,0 +1,12 @@
+{
+  "id": "scapegoat",
+  "title": "The Scapegoat",
+  "selection": {
+    "priority": 1,
+    "rule": "'scapegoat' in ending_flags"
+  },
+  "prose_ref": "docs/06_endings.md#the-scapegoat",
+  "conditional_lines": [],
+  "content_note": true,
+  "crisis_resources_visible": true
+}

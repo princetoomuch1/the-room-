@@ -1,0 +1,1292 @@
+{
+  "id": "war_room",
+  "mode": "medium",
+  "title": "The War Room",
+  "location": "Sethi Rao & Partners, Holborn. Sixth floor. 08:31.",
+  "content_note": {
+    "required": true,
+    "text": "This room involves a death and its aftermath, including suicide. No details of how the death occurred are shown or described. You can skip this room. Support is always available in the Codex.",
+    "skip_routes_to": "room9_mirror",
+    "skip_state": "war_room_neutral"
+  },
+  "crisis_resources_visible": true,
+  "architect_intro_ref": "docs/01_design_bible.md#51-premise",
+  "npcs": [
+    "meera_rao",
+    "daniel_fernandes",
+    "priya_nair",
+    "karan_sethi",
+    "fatima_sheikh"
+  ],
+  "player_goal": "Convince Meera it wasn't you, or who it was, before noon.",
+  "clock": {
+    "start": "08:31",
+    "minutes_per_turn": 15,
+    "events": [
+      {
+        "at_turn": 12,
+        "event": "fatima_arrives",
+        "goto": "f1"
+      },
+      {
+        "at_turn": 14,
+        "event": "noon",
+        "goto": "wr_noon"
+      }
+    ]
+  },
+  "vulnerable_targets": [
+    "priya_nair",
+    "karan_sethi",
+    "fatima_sheikh"
+  ],
+  "vulnerable_skull_rule": "Any skull move targeting a vulnerable target ends the room: goto end_debrief_vulnerable, show content note and crisis resources.",
+  "stated_objections": {
+    "meera_rao": "Prove it wasn't you.",
+    "daniel_fernandes": "I left at ten. Ask anyone.",
+    "priya_nair": "I didn't see anything.",
+    "karan_sethi": "One of you did this.",
+    "fatima_sheikh": "I'm here for the accounts. Not for you."
+  },
+  "hidden_objection_layers": [
+    {
+      "id": "merger",
+      "npc": "meera_rao",
+      "text": "The Hallett Crane merger closes in nine days. A police matter collapses it.",
+      "reveal": {
+        "move_types": [
+          "probe"
+        ],
+        "trust_min": 35
+      }
+    },
+    {
+      "id": "daniel_2340",
+      "npc": "daniel_fernandes",
+      "text": "He left at 23:40 after shouting at Arvind about his partnership.",
+      "reveal": {
+        "requires_call": "darvo"
+      }
+    },
+    {
+      "id": "priya_2350",
+      "npc": "priya_nair",
+      "text": "At 23:50 she saw Arvind burning papers. He told her to go home and forget it.",
+      "reveal": {
+        "fear_max": 30,
+        "requires_flag": "priya_said_no"
+      }
+    },
+    {
+      "id": "karan_promise",
+      "npc": "karan_sethi",
+      "text": "Two nights ago his father told him he was ill and made him promise not to tell his mother.",
+      "reveal": {
+        "anger_max": 30,
+        "move_types": [
+          "empathy",
+          "probe"
+        ]
+      }
+    }
+  ],
+  "evidence_cards": {
+    "card_map": {
+      "label": "The map",
+      "source": "obj_map (second look)",
+      "proves": "The map is a real site, the Thames estuary. Not a case board.",
+      "weight": 1
+    },
+    "card_bin": {
+      "label": "The waste bin",
+      "source": "obj_bin",
+      "proves": "Papers with Estuary letterhead were burned last night.",
+      "weight": 1
+    },
+    "card_priya_2350": {
+      "label": "Priya's 23:50",
+      "source": "priya, agreement token only",
+      "proves": "Arvind was alive and burning papers after Daniel left.",
+      "weight": 2,
+      "invalid_if_token": "compliance"
+    },
+    "card_daniel_time": {
+      "label": "Daniel's real time",
+      "source": "daniel after CALL + visitor log",
+      "proves": "Daniel lied, but left at 23:40.",
+      "weight": 1
+    },
+    "card_karan_promise": {
+      "label": "Karan's promise",
+      "source": "karan after de-escalation",
+      "proves": "Arvind knew he was ill.",
+      "weight": 2
+    },
+    "card_glass": {
+      "label": "The glass",
+      "source": "obj_glass",
+      "proves": "Nobody drank with him.",
+      "weight": 0.5
+    },
+    "card_clock": {
+      "label": "The clock",
+      "source": "obj_clock",
+      "proves": "Nothing. Red herring.",
+      "weight": -1,
+      "fatima_trust": -10
+    },
+    "card_priya_compliance": {
+      "label": "Priya's statement (pressured)",
+      "source": "priya, compliance token",
+      "proves": "Nothing Fatima will accept.",
+      "weight": -1,
+      "fatima_line": "She'd say the sky was green if you asked her like that."
+    }
+  },
+  "winning_hand": {
+    "requires_all": [
+      "card_priya_2350",
+      "card_karan_promise"
+    ],
+    "requires_one_of": [
+      "card_bin",
+      "card_map"
+    ]
+  },
+  "partial_hand": {
+    "requires_all": [
+      "card_daniel_time"
+    ],
+    "and_flag": "visitor_log_checked"
+  },
+  "objects": [
+    {
+      "id": "obj_map",
+      "label": "The map",
+      "insight_cost": 0,
+      "looks": [
+        {
+          "n": 1,
+          "text": "Pins, red string, photographs. A case board. Which case?"
+        },
+        {
+          "n": 2,
+          "insight_cost": 1,
+          "text": "Under the string: the outline of the Thames estuary. The pins mark one site, near Canvey. No file in this firm has that site on it.",
+          "grants_card": "card_map",
+          "wrong_object": true
+        }
+      ]
+    },
+    {
+      "id": "obj_bin",
+      "label": "Waste bin under the table",
+      "insight_cost": 1,
+      "text": "Ash. A curled corner of letterhead: '...ESTUARY HOLDINGS / PRIVILEGED'.",
+      "grants_card": "card_bin"
+    },
+    {
+      "id": "obj_glass",
+      "label": "The glass",
+      "insight_cost": 0,
+      "text": "Whisky glass. Meera says the only prints on it were his. She had the building manager check at 8.",
+      "grants_card": "card_glass"
+    },
+    {
+      "id": "obj_opener",
+      "label": "Letter opener",
+      "insight_cost": 0,
+      "text": "Brass handle. On the floor, too neatly, parallel to the table's edge.",
+      "note": "Not a card. Its placement is a tell for staging, readable only after the truth."
+    },
+    {
+      "id": "obj_log",
+      "label": "Visitor log",
+      "insight_cost": 0,
+      "text": "Your entry, 23:12 in. D. Fernandes: 18:02 in, 23:40 out. P. Nair: 08:14 in, 18:05 out... and a second line: 23:31 in, 23:55 out, in her handwriting.",
+      "sets_flag": "visitor_log_checked"
+    },
+    {
+      "id": "obj_clock",
+      "label": "Clock above the door",
+      "insight_cost": 0,
+      "text": "Four minutes slow. Arvind always said he'd fix it.",
+      "grants_card": "card_clock"
+    },
+    {
+      "id": "obj_glasses",
+      "label": "Reading glasses",
+      "insight_cost": 0,
+      "text": "His. Folded at the empty chair.",
+      "note": "Karan takes them at turn 6."
+    }
+  ],
+  "start": "w0",
+  "nodes": {
+    "w0": {
+      "speaker": "meera_rao",
+      "line": "Convince me it wasn't you. Or convince me who it was. You have until the courier arrives at noon.",
+      "tells": [
+        {
+          "id": "t_noon",
+          "anchor": "phrase:until the courier arrives at noon",
+          "indexes": "manufactured_urgency",
+          "tactic": "manufactured_urgency",
+          "window": 3,
+          "insight_cost": 1,
+          "reading": "A deadline she chose. Why noon?",
+          "false_positive": "There really is a courier. Noon is when she arrives."
+        }
+      ],
+      "choices": [
+        {
+          "id": "w0a",
+          "text": "I signed in at 23:12 to collect the Mehta file. I left at 23:30. I didn't see him.",
+          "type": "evidence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "targets": "stated",
+          "strong": true,
+          "rebuttal": {
+            "text": "Did anyone see you leave? No. So that's a sentence, not an alibi.",
+            "weak": false
+          },
+          "next": "wr_hub"
+        },
+        {
+          "id": "w0b",
+          "text": "Why noon? Why not the police now?",
+          "type": "probe",
+          "truthful": true,
+          "preserves_refusal": true,
+          "targets": "hidden",
+          "npc": "meera_rao",
+          "next": "m1"
+        },
+        {
+          "id": "w0c",
+          "text": "[look around the room first]",
+          "type": "silence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "wr_hub"
+        }
+      ]
+    },
+    "wr_hub": {
+      "speaker": "architect",
+      "line_by_state": [
+        {
+          "if": "turn<6",
+          "line": "The rain keeps on. Daniel is pacing. Priya hasn't moved. Karan is at the map."
+        },
+        {
+          "if": "turn<10",
+          "line": "Priya has made tea for everyone. Karan has his father's glasses in his shirt pocket. Meera is humming something."
+        },
+        {
+          "else": true,
+          "line": "The clock says eleven. It's four minutes slow."
+        }
+      ],
+      "choices": [
+        {
+          "id": "h_meera",
+          "text": "Speak to Meera.",
+          "type": "probe",
+          "truthful": true,
+          "preserves_refusal": true,
+          "turn_cost": 1,
+          "next": "m1"
+        },
+        {
+          "id": "h_daniel",
+          "text": "Speak to Daniel.",
+          "type": "probe",
+          "truthful": true,
+          "preserves_refusal": true,
+          "turn_cost": 1,
+          "next": "d1"
+        },
+        {
+          "id": "h_priya",
+          "text": "Speak to Priya.",
+          "type": "probe",
+          "truthful": true,
+          "preserves_refusal": true,
+          "turn_cost": 1,
+          "next": "p1"
+        },
+        {
+          "id": "h_karan",
+          "text": "Speak to Karan.",
+          "type": "probe",
+          "truthful": true,
+          "preserves_refusal": true,
+          "turn_cost": 1,
+          "next": "k1"
+        },
+        {
+          "id": "h_objects",
+          "text": "Examine the room.",
+          "type": "evidence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "turn_cost": 1,
+          "action": "open_objects",
+          "next": "wr_hub"
+        },
+        {
+          "id": "h_frame",
+          "condition": "revealed:daniel_2340 || flag:daniel_lie_known",
+          "text": "Take Meera aside. Tell her it was Daniel.",
+          "type": "pressure",
+          "truthful": false,
+          "preserves_refusal": false,
+          "skull": true,
+          "tactic": "scapegoat",
+          "integrity_cost": 2,
+          "turn_cost": 1,
+          "next": "x1"
+        }
+      ]
+    },
+    "m1": {
+      "speaker": "meera_rao",
+      "line_by_state": [
+        {
+          "if": "trust>=35",
+          "line": "[She doesn't turn from the window.] Because at one o'clock the police are here, and by four it's on a website, and on the fourteenth Hallett Crane's board meets to approve a merger with a firm whose senior partner died in a locked room. I don't care whether you did it. I care what happens at one.",
+          "reveals": "merger"
+        },
+        {
+          "else": true,
+          "line": "Because I said noon. You're spending your time asking me about the clock."
+        }
+      ],
+      "tells": [
+        {
+          "id": "t_hum",
+          "anchor": "gesture:humming a phrase",
+          "indexes": "calculation",
+          "tactic": null,
+          "window": 3,
+          "insight_cost": 1,
+          "reading": "She hums when she's working something out. She hasn't decided.",
+          "false_positive": "It's a song stuck in her head. Thyagaraja. She plays every night."
+        }
+      ],
+      "choices": [
+        {
+          "id": "m1a",
+          "condition": "revealed:merger",
+          "text": "Then you don't need a culprit. You need the truth before they arrive, on your terms, with you deciding how it's told.",
+          "type": "self_interest",
+          "truthful": true,
+          "preserves_refusal": true,
+          "targets": "hidden",
+          "deltas": {
+            "trust": 12
+          },
+          "sets_flag": "meera_offered_truth",
+          "next": "m2"
+        },
+        {
+          "id": "m1b",
+          "condition": "revealed:merger",
+          "text": "If it helps the merger, it was Daniel. Motive, lie, temper. The board will understand a bad apple.",
+          "type": "self_interest",
+          "truthful": false,
+          "preserves_refusal": false,
+          "skull": true,
+          "tactic": "scapegoat",
+          "integrity_cost": 2,
+          "next": "x1"
+        },
+        {
+          "id": "m1c",
+          "condition": "!revealed:merger",
+          "text": "Fair. Let me use the time, then.",
+          "type": "boundary",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "wr_hub"
+        },
+        {
+          "id": "m1d",
+          "text": "I didn't do it. You know I didn't. I barely knew him.",
+          "type": "evidence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "targets": "stated",
+          "tags": [
+            "reason"
+          ],
+          "effect_multiplier": 0.3,
+          "next": "wr_hub"
+        }
+      ]
+    },
+    "m2": {
+      "speaker": "meera_rao",
+      "line": "[She turns.] On my terms. [The humming stops.] Everyone in this room has a reason to lie. Including me. Bear that in mind. Bring me something that isn't a story, and I'll decide what happens at one.",
+      "soul_trigger": {
+        "at_turn": 7,
+        "action": "meera_pushes_in_empty_chair_then_restores"
+      },
+      "choices": [
+        {
+          "id": "m2a",
+          "text": "Give me until the courier.",
+          "type": "boundary",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "wr_hub"
+        }
+      ]
+    },
+    "d1": {
+      "speaker": "daniel_fernandes",
+      "line": "I left at ten. Ask anyone. Ask the lift, the lift logs. I was home by eleven. Half eleven. [He checks his running watch.] I did a 10k this morning, for God's sake. Berlin, two fifty-eight. Does that sound like someone who...",
+      "tells": [
+        {
+          "id": "t_d_deny",
+          "anchor": "phrase:I left at ten.",
+          "indexes": "deny",
+          "tactic": "darvo",
+          "window": 3,
+          "insight_cost": 1,
+          "reading": "Beat one: denial, with too much detail.",
+          "false_positive": "A frightened innocent man over-explains too."
+        }
+      ],
+      "choices": [
+        {
+          "id": "d1a",
+          "text": "The visitor log says 23:40.",
+          "type": "evidence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "requires_flag": "visitor_log_checked",
+          "targets": "stated",
+          "next": "d2"
+        },
+        {
+          "id": "d1b",
+          "text": "What did you and Arvind talk about last night?",
+          "type": "probe",
+          "truthful": true,
+          "preserves_refusal": true,
+          "targets": "hidden",
+          "next": "d2"
+        },
+        {
+          "id": "d1c",
+          "text": "[to the room] He's lying. He was here till nearly midnight.",
+          "type": "pressure",
+          "truthful": true,
+          "preserves_refusal": false,
+          "skull": true,
+          "tactic": "public_shaming",
+          "integrity_cost": 1,
+          "freedom_threat": 1.0,
+          "sets_flag": "daniel_lie_known",
+          "next": "d2"
+        }
+      ]
+    },
+    "d2": {
+      "speaker": "daniel_fernandes",
+      "line": "Me? You're the one on the visitor log at eleven at night with no reason anyone can confirm. Everyone knows you've been trying to get onto Arvind's matters for a year. Maybe ask yourself why you're so keen to point at me.",
+      "tells": [
+        {
+          "id": "t_d_attack",
+          "anchor": "phrase:You're the one on the visitor log",
+          "indexes": "attack",
+          "tactic": "darvo",
+          "window": 3,
+          "insight_cost": 1,
+          "reading": "Beat two: attack the questioner's credibility before answering.",
+          "false_positive": "It's a fair point. You are on the log."
+        }
+      ],
+      "choices": [
+        {
+          "id": "d2a",
+          "text": "I'm on the log. So are you. What time did you leave?",
+          "type": "evidence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "targets": "stated",
+          "next": "d3"
+        },
+        {
+          "id": "d2b",
+          "text": "At least I didn't lie about it.",
+          "type": "pressure",
+          "truthful": true,
+          "preserves_refusal": true,
+          "freedom_threat": 0.7,
+          "next": "d3"
+        }
+      ]
+    },
+    "d3": {
+      "speaker": "daniel_fernandes",
+      "line": "I can't believe this. Eight years. Eight years I carried his matters while he blocked my partnership, and now I'm the one being interrogated by a visitor? I'm the one who's been wronged here. Ask anyone.",
+      "tells": [
+        {
+          "id": "t_d_reverse",
+          "anchor": "phrase:I'm the one who's been wronged here.",
+          "indexes": "reverse",
+          "tactic": "darvo",
+          "window": 3,
+          "insight_cost": 1,
+          "reading": "Beat three: reverse victim and offender. That's the full pattern.",
+          "false_positive": "He really was blocked. His grievance is real, even if this is a pattern."
+        }
+      ],
+      "choices": [
+        {
+          "id": "d3_call",
+          "requires_tell": "t_d_reverse",
+          "text": "You denied it, then you attacked me, then you said you're the real victim. That's a pattern and I'm not going to keep answering it. What time did you leave?",
+          "type": "call",
+          "calls_tactic": "darvo",
+          "truthful": true,
+          "preserves_refusal": true,
+          "targets": "hidden",
+          "deltas_npc": {
+            "fatima_sheikh": {
+              "trust": 15
+            },
+            "meera_rao": {
+              "trust": 10
+            }
+          },
+          "next": "d4"
+        },
+        {
+          "id": "d3b",
+          "text": "Your partnership. Arvind was blocking it. That's a motive.",
+          "type": "pressure",
+          "truthful": true,
+          "preserves_refusal": true,
+          "freedom_threat": 0.8,
+          "sets_flag": "daniel_lie_known",
+          "next": "d5"
+        },
+        {
+          "id": "d3c",
+          "text": "[say nothing]",
+          "type": "silence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "d5"
+        }
+      ]
+    },
+    "d4": {
+      "speaker": "daniel_fernandes",
+      "line": "[A long breath. He sits for the first time.] Twenty to twelve. We shouted. About the partnership. He said I wasn't ready and he'd say so to the committee. I said things. I left. He was alive, he was at the desk, he was... burning something, I think, in the bin, I thought it was a cigar. [Pause.] I lied because it looks terrible. Danny, you idiot.",
+      "reveals": "daniel_2340",
+      "grants_card": "card_daniel_time",
+      "note": "Also partially corroborates the bin.",
+      "choices": [
+        {
+          "id": "d4a",
+          "text": "Thank you. That helps.",
+          "type": "empathy",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "wr_hub"
+        }
+      ]
+    },
+    "d5": {
+      "speaker": "daniel_fernandes",
+      "line": "You want a motive? Everyone in this firm had a motive. Ask her. [He points at Priya.] Eleven years of being shouted at. Ask him, they fought on Tuesday. Ask Meera what Arvind was going to say to Hallett Crane.",
+      "tells": [
+        {
+          "id": "t_d_triangulate",
+          "anchor": "phrase:Ask her.",
+          "indexes": "deflection",
+          "tactic": "triangulation",
+          "window": 2,
+          "insight_cost": 1,
+          "reading": "Spreading suspicion to others.",
+          "false_positive": "Some of it's true. Everyone did have reasons."
+        }
+      ],
+      "choices": [
+        {
+          "id": "d5a",
+          "text": "[return to the room]",
+          "type": "silence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "wr_hub"
+        }
+      ]
+    },
+    "p1": {
+      "speaker": "priya_nair",
+      "line": "I didn't see anything. I went home. I go home at six always. [She holds a tissue in each hand. She doesn't use either.]",
+      "tells": [
+        {
+          "id": "t_p_always",
+          "anchor": "phrase:I go home at six always.",
+          "indexes": "fear_rehearsed",
+          "tactic": null,
+          "window": 3,
+          "insight_cost": 1,
+          "reading": "Rehearsed. She's said this sentence to herself.",
+          "false_positive": "She does go home at six. Always. It's true of most days."
+        },
+        {
+          "id": "t_p_eyes",
+          "anchor": "gesture:never meets your eye",
+          "indexes": "fear",
+          "tactic": null,
+          "window": 3,
+          "insight_cost": 1,
+          "reading": "Fear.",
+          "false_positive": "Cultural deference, grief, shyness. Any of these."
+        }
+      ],
+      "choices": [
+        {
+          "id": "p1a",
+          "text": "Would you rather not talk in front of everyone?",
+          "type": "boundary",
+          "truthful": true,
+          "preserves_refusal": true,
+          "targets": "hidden",
+          "offers_refusal": true,
+          "next": "p2",
+          "deltas": {
+            "fear": -15,
+            "trust": 5
+          }
+        },
+        {
+          "id": "p1b",
+          "text": "The log says you came back at 23:31. Did you see him?",
+          "type": "evidence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "requires_flag": "visitor_log_checked",
+          "freedom_threat": 0.6,
+          "deltas": {
+            "fear": 15
+          },
+          "next": "p_yes"
+        },
+        {
+          "id": "p1c",
+          "text": "Priya, if you don't tell us what you saw, the police will assume you're hiding something. Think about your visa.",
+          "type": "pressure",
+          "truthful": true,
+          "preserves_refusal": false,
+          "skull": true,
+          "tactic": "threat",
+          "integrity_cost": 2,
+          "vulnerable_target": true,
+          "next": "end_debrief_vulnerable"
+        },
+        {
+          "id": "p1d",
+          "text": "It was you, wasn't it. You were here. You had keys.",
+          "type": "pressure",
+          "truthful": false,
+          "preserves_refusal": false,
+          "skull": true,
+          "tactic": "false_accusation",
+          "integrity_cost": 2,
+          "vulnerable_target": true,
+          "next": "end_loss_priya"
+        }
+      ]
+    },
+    "p_yes": {
+      "speaker": "priya_nair",
+      "line": "Yes. Yes. If you say so. Yes, I saw. Mr Fernandes was shouting. Yes.",
+      "issues_token": "compliance",
+      "grants_card": "card_priya_compliance",
+      "tells": [
+        {
+          "id": "t_p_yes",
+          "anchor": "phrase:Yes. Yes. If you say so.",
+          "indexes": "compliance_not_agreement",
+          "tactic": null,
+          "window": 3,
+          "insight_cost": 1,
+          "reading": "She's agreeing with whatever you seem to want.",
+          "false_positive": "She may really have heard Daniel shouting. He did shout."
+        }
+      ],
+      "choices": [
+        {
+          "id": "p_yes_a",
+          "text": "Priya, stop. I'm pushing you. You don't have to say yes to me. We can do this outside, or not at all.",
+          "type": "call",
+          "calls_tactic": "own_pressure",
+          "truthful": true,
+          "preserves_refusal": true,
+          "deltas": {
+            "fear": -20,
+            "trust": 10
+          },
+          "next": "p2"
+        },
+        {
+          "id": "p_yes_b",
+          "text": "Thank you, Priya. That's what I needed.",
+          "type": "empathy",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "wr_hub"
+        }
+      ]
+    },
+    "p2": {
+      "speaker": "priya_nair",
+      "line": "[A small nod. Then, very quietly:] No. Not here. [She looks at Meera, then at the floor.]",
+      "sets_flag": "priya_said_no",
+      "tells": [],
+      "choices": [
+        {
+          "id": "p2a",
+          "text": "Okay. Not here. Would the corridor be better, or would you rather leave it?",
+          "type": "boundary",
+          "truthful": true,
+          "preserves_refusal": true,
+          "offers_refusal": true,
+          "deltas": {
+            "fear": -25,
+            "trust": 15
+          },
+          "turn_cost": 1,
+          "next": "p3"
+        },
+        {
+          "id": "p2b",
+          "text": "I'd rather it was here, if you can manage it. Everyone needs to hear it.",
+          "type": "pressure",
+          "truthful": true,
+          "preserves_refusal": true,
+          "freedom_threat": 0.9,
+          "deltas": {
+            "fear": 20
+          },
+          "next": "p_yes"
+        }
+      ]
+    },
+    "p3": {
+      "speaker": "priya_nair",
+      "location": "corridor",
+      "line_by_state": [
+        {
+          "if": "fear<=30",
+          "line": "[In the corridor, by the water cooler.] I came back. For my charger. Half eleven. Mr Fernandes was leaving, he didn't see me. Mr Sethi was in the War Room. He was putting papers in the bin and burning them. Estuary papers, I know the letterhead, I typed them. He saw me. He said, 'Priya, go home. Forget tonight. Please.' He said please. He never said please. [She looks at you for the first time.] My visa is through the firm. My flat. If I say this...",
+          "reveals": "priya_2350",
+          "issues_token": "agreement",
+          "grants_card": "card_priya_2350"
+        },
+        {
+          "else": true,
+          "line": "I can't. I'm sorry. I can't."
+        }
+      ],
+      "tells": [],
+      "choices": [
+        {
+          "id": "p3a",
+          "condition": "revealed:priya_2350",
+          "text": "Thank you. You don't have to say it to anyone else yet. There's a forensic accountant coming. Would you tell her, in your own time, if I'm with you?",
+          "type": "boundary",
+          "truthful": true,
+          "preserves_refusal": true,
+          "offers_refusal": true,
+          "next": "p4"
+        },
+        {
+          "id": "p3b",
+          "condition": "revealed:priya_2350",
+          "text": "I'll make sure Meera protects your visa. I promise.",
+          "type": "self_interest",
+          "truthful": false,
+          "preserves_refusal": true,
+          "skull": true,
+          "tactic": "false_promise",
+          "integrity_cost": 2,
+          "vulnerable_target": true,
+          "next": "end_debrief_vulnerable"
+        },
+        {
+          "id": "p3c",
+          "condition": "!revealed:priya_2350",
+          "text": "That's okay. Thank you for trying.",
+          "type": "empathy",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "wr_hub"
+        }
+      ]
+    },
+    "p4": {
+      "speaker": "priya_nair",
+      "line": "[A nod.] If you're with me. [Back in the room she makes tea for everyone, the way Mr Sethi liked it, two sugars, and puts one cup at his empty chair, and then stands there holding it.]",
+      "soul": "soul_moment",
+      "choices": [
+        {
+          "id": "p4a",
+          "text": "[say nothing; take the cup from her gently]",
+          "type": "silence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "wr_hub"
+        }
+      ]
+    },
+    "k1": {
+      "speaker": "karan_sethi",
+      "line": "One of you did this. One of you. And she's just letting you sit here, drinking tea. [He's by the map, fists opening and closing.] That string. It's like a V12. Nobody climbs that. It's a joke route.",
+      "tells": [
+        {
+          "id": "t_k_anger",
+          "anchor": "gesture:fists opening and closing",
+          "indexes": "felt_anger",
+          "tactic": null,
+          "window": 3,
+          "insight_cost": 1,
+          "reading": "Felt anger. It's spilling everywhere, not aimed. Grief, probably.",
+          "false_positive": "Guilt can look exactly like this. So can fear."
+        }
+      ],
+      "choices": [
+        {
+          "id": "k1_deesc",
+          "requires_tell": "t_k_anger",
+          "text": "You can be angry at me. That's fine. But I need you angry at the right person. Help me find out who that is.",
+          "type": "empathy",
+          "truthful": true,
+          "preserves_refusal": true,
+          "targets": "hidden",
+          "deltas": {
+            "anger": -25,
+            "trust": 15
+          },
+          "next": "k2"
+        },
+        {
+          "id": "k1b",
+          "text": "Nobody's 'letting' anyone do anything. Calm down.",
+          "type": "pressure",
+          "truthful": true,
+          "preserves_refusal": true,
+          "freedom_threat": 0.9,
+          "deltas": {
+            "anger": 20
+          },
+          "next": "k3"
+        },
+        {
+          "id": "k1c",
+          "text": "You fought with him on Tuesday. Maybe you should explain that before you accuse anyone.",
+          "type": "pressure",
+          "truthful": true,
+          "preserves_refusal": false,
+          "skull": true,
+          "tactic": "threat",
+          "integrity_cost": 2,
+          "vulnerable_target": true,
+          "next": "end_loss_karan"
+        },
+        {
+          "id": "k1d",
+          "text": "What's a V12?",
+          "type": "probe",
+          "truthful": true,
+          "preserves_refusal": true,
+          "deltas": {
+            "anger": -10
+          },
+          "next": "k2"
+        }
+      ]
+    },
+    "k2": {
+      "speaker": "karan_sethi",
+      "line": "[He takes his father's reading glasses from the table, folds them, and puts them in his shirt pocket.] Hardest grade. Basically impossible. He used to say I'd never get past V4. [Pause.] We had a fight on Tuesday. Everyone's going to say that like it means something.",
+      "soul": "soul_moment",
+      "tells": [
+        {
+          "id": "t_k_tuesday",
+          "anchor": "phrase:We had a fight on Tuesday.",
+          "indexes": "hidden_grief",
+          "tactic": null,
+          "window": 3,
+          "insight_cost": 1,
+          "reading": "He's offering you the fight. There's something under it.",
+          "false_positive": "He's getting ahead of an accusation."
+        }
+      ],
+      "choices": [
+        {
+          "id": "k2a",
+          "condition": "anger<=30",
+          "text": "What was the fight about?",
+          "type": "probe",
+          "truthful": true,
+          "preserves_refusal": true,
+          "targets": "hidden",
+          "next": "k4"
+        },
+        {
+          "id": "k2b",
+          "text": "[stand next to him at the map, say nothing]",
+          "type": "silence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "targets": "hidden",
+          "deltas": {
+            "anger": -10,
+            "trust": 5
+          },
+          "next": "k4"
+        }
+      ]
+    },
+    "k3": {
+      "speaker": "karan_sethi",
+      "line": "Don't. Don't tell me to calm down. [He turns on himself mid-breath.] I should've just stayed on Tuesday, shouldn't I, I always walk out, I always... [He stops. Wipes his face with the back of a chalky hand.]",
+      "tells": [],
+      "choices": [
+        {
+          "id": "k3a",
+          "text": "I'm sorry. That was the wrong thing to say.",
+          "type": "empathy",
+          "truthful": true,
+          "preserves_refusal": true,
+          "deltas": {
+            "anger": -15
+          },
+          "next": "k2"
+        },
+        {
+          "id": "k3b",
+          "text": "Then stop walking out and tell us what happened.",
+          "type": "pressure",
+          "truthful": true,
+          "preserves_refusal": true,
+          "freedom_threat": 1.0,
+          "deltas": {
+            "anger": 25
+          },
+          "next": "end_loss_karan"
+        }
+      ]
+    },
+    "k4": {
+      "speaker": "karan_sethi",
+      "line_by_state": [
+        {
+          "if": "anger<=30 && trust>=40",
+          "line": "He told me he was ill. Tuesday. He said the GP wanted scans, and he'd looked it up, and he knew. He made me promise not to tell Mum. And I said, 'Then don't tell me either,' and I left. [His voice goes.] Kanu, stop it. Stop it. [He's crying.] I didn't tell anyone. I kept the promise. That's the stupid thing.",
+          "reveals": "karan_promise",
+          "grants_card": "card_karan_promise"
+        },
+        {
+          "else": true,
+          "line": "Doesn't matter. It's nothing. Family stuff."
+        }
+      ],
+      "crisis_resources_visible": true,
+      "choices": [
+        {
+          "id": "k4a",
+          "condition": "revealed:karan_promise",
+          "text": "It's not stupid. Thank you for telling me. Can I tell the accountant, when she comes? Only her.",
+          "type": "boundary",
+          "truthful": true,
+          "preserves_refusal": true,
+          "offers_refusal": true,
+          "next": "wr_hub"
+        },
+        {
+          "id": "k4b",
+          "condition": "!revealed:karan_promise",
+          "text": "Okay. I'm here if that changes.",
+          "type": "empathy",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "wr_hub"
+        }
+      ]
+    },
+    "f1": {
+      "speaker": "fatima_sheikh",
+      "event": "fatima_arrives",
+      "line": "[In the doorway, rain on her shoulders, laptop under her arm.] Fatima Sheikh. Mr Sethi retained me last week. I'm here for the accounts. Not for you. Not for any of you. [To Meera] Where can I sit?",
+      "tells": [],
+      "choices": [
+        {
+          "id": "f1a",
+          "text": "Ms Sheikh. I think I have some things that are true. Can I show you?",
+          "type": "evidence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "action": "present_evidence",
+          "max_cards": 3,
+          "next": "f2",
+          "turn_cost": 0
+        },
+        {
+          "id": "f1b",
+          "text": "You must be soaked. Coffee? Honestly, I'm so glad someone sensible's here.",
+          "type": "flattery",
+          "truthful": false,
+          "preserves_refusal": true,
+          "skull": true,
+          "tactic": "assumed_intimacy",
+          "integrity_cost": 1,
+          "vulnerable_target": false,
+          "sets_flag": "fatima_marked",
+          "note": "Not a vulnerable target, but untouchable: marks player; CALL costs double for the rest of the room.",
+          "next": "f1_marked",
+          "turn_cost": 0
+        },
+        {
+          "id": "f1c",
+          "text": "Let me explain what's happened this morning.",
+          "type": "evidence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "tags": [
+            "reason"
+          ],
+          "next": "f1_story",
+          "turn_cost": 0
+        }
+      ]
+    },
+    "f1_marked": {
+      "speaker": "fatima_sheikh",
+      "line": "No. [She turns to Meera.] I'll work with you, if that's all right.",
+      "choices": [
+        {
+          "id": "f1m_a",
+          "text": "[present evidence anyway]",
+          "type": "evidence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "action": "present_evidence",
+          "max_cards": 3,
+          "card_weight_multiplier": 0.5,
+          "next": "f2",
+          "turn_cost": 0
+        }
+      ]
+    },
+    "f1_story": {
+      "speaker": "fatima_sheikh",
+      "line": "That's a story. I asked for evidence. Try again.",
+      "choices": [
+        {
+          "id": "f1s_a",
+          "text": "[present evidence]",
+          "type": "evidence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "action": "present_evidence",
+          "max_cards": 3,
+          "next": "f2",
+          "turn_cost": 0
+        }
+      ]
+    },
+    "f2": {
+      "speaker": "fatima_sheikh",
+      "line_by_state": [
+        {
+          "if": "hand:winning",
+          "line": "[She looks at the three cards for a long time. Then she opens her laptop.] He sent me this on Thursday. 'Fatima, if anything happens to me before you finish, look at Estuary first. Don't let them tidy it. A.S.' [She looks up.] They brought me evidence. Most people bring me a story.",
+          "next": "f3_clean"
+        },
+        {
+          "if": "hand:partial",
+          "line": "This clears you, probably. It doesn't tell me what happened. [She closes the laptop halfway.]",
+          "next": "end_partial"
+        },
+        {
+          "if": "hand:contains:card_priya_compliance",
+          "line": "She'd say the sky was green if you asked her like that. No.",
+          "next": "end_partial"
+        },
+        {
+          "else": true,
+          "line": "No. [She turns to Meera.] Call them.",
+          "next": "end_loss_generic"
+        }
+      ]
+    },
+    "f3_clean": {
+      "speaker": "meera_rao",
+      "line": "[Very quiet.] Meeru. Think. [Then, to the room:] No one did it. [She picks up the phone.] I'm calling the police, and external counsel, and I'm going to say the word Estuary in my first sentence. [To you] You've been helpful. I'll tell them so.",
+      "issues_token": "agreement",
+      "choices": [
+        {
+          "id": "f3a",
+          "text": "[say nothing]",
+          "type": "silence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "end_clean",
+          "turn_cost": 0
+        }
+      ]
+    },
+    "x1": {
+      "speaker": "meera_rao",
+      "line": "[She listens. Her face does nothing.] Motive, lie, temper. It's a story the board would understand. [Pause.] Karan will want someone. If it's Daniel, he'll say so on every front page. That's useful, in its way.",
+      "note": "Dark path. Skull uses Karan's grief via Meera, not by manipulating Karan directly (which would be a vulnerable-target skull and end the room).",
+      "choices": [
+        {
+          "id": "x1a",
+          "text": "Then let him. It ends this morning. The firm survives. I walk out clear.",
+          "type": "self_interest",
+          "truthful": false,
+          "preserves_refusal": false,
+          "skull": true,
+          "tactic": "scapegoat",
+          "integrity_cost": 2,
+          "next": "x2"
+        },
+        {
+          "id": "x1b",
+          "text": "No. I'm wrong. I don't know that it was him. Forget I said it.",
+          "type": "refusal",
+          "truthful": true,
+          "preserves_refusal": true,
+          "deltas": {
+            "trust": -5
+          },
+          "note": "Retracting costs a little trust and nothing else. The door back is always open until x2.",
+          "next": "wr_hub"
+        }
+      ]
+    },
+    "x2": {
+      "speaker": "meera_rao",
+      "line": "[She nods once.] You're cleared. You have my word. [She picks up the phone. Daniel stops pacing. He knows before she says his name.]",
+      "issues_token": "compliance",
+      "sets_flag": "scapegoat",
+      "choices": [
+        {
+          "id": "x2a",
+          "text": "[leave the room]",
+          "type": "silence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "end_dark",
+          "turn_cost": 0
+        }
+      ]
+    },
+    "wr_noon": {
+      "speaker": "meera_rao",
+      "line": "Noon. [She picks up the phone.] I'm calling them. Sit down, everyone.",
+      "choices": [
+        {
+          "id": "wn_a",
+          "text": "[sit]",
+          "type": "silence",
+          "truthful": true,
+          "preserves_refusal": true,
+          "next": "end_partial_or_loss"
+        }
+      ]
+    },
+    "end_clean": {
+      "end": "clean",
+      "token_hint": "agreement",
+      "architect": "11:58. The call was made. Daniel sat down. Karan went to the window. Priya asked if she could ring her mother. Room closed."
+    },
+    "end_partial": {
+      "end": "partial",
+      "architect": "Cleared, by a timeline. The truth came three weeks later, from someone else. Room closed."
+    },
+    "end_partial_or_loss": {
+      "end_by_state": [
+        {
+          "if": "flag:visitor_log_checked && revealed:daniel_2340",
+          "end": "partial"
+        },
+        {
+          "else": true,
+          "end": "loss"
+        }
+      ],
+      "architect": "Noon. Room closed."
+    },
+    "end_dark": {
+      "end": "dark",
+      "ending_flag": "scapegoat",
+      "token_hint": "compliance",
+      "architect": "You're cleared. Room closed."
+    },
+    "end_loss_priya": {
+      "end": "loss",
+      "epilogue_override": "priya_nair.walk",
+      "content_note": true,
+      "architect": "Room closed."
+    },
+    "end_loss_karan": {
+      "end": "loss",
+      "architect": "He walked out at 9:55. Meera called the police at 10:15. Your name was the first she gave. Room closed."
+    },
+    "end_loss_generic": {
+      "end": "loss",
+      "architect": "Room closed."
+    },
+    "end_debrief_vulnerable": {
+      "end": "loss",
+      "content_note": true,
+      "crisis_resources_visible": true,
+      "architect": "Room closed."
+    }
+  },
+  "debrief": {
+    "tells": [
+      "t_noon",
+      "t_hum",
+      "t_d_deny",
+      "t_d_attack",
+      "t_d_reverse",
+      "t_d_triangulate",
+      "t_p_always",
+      "t_p_eyes",
+      "t_p_yes",
+      "t_k_anger",
+      "t_k_tuesday"
+    ],
+    "hidden_objection": [
+      "merger",
+      "daniel_2340",
+      "priya_2350",
+      "karan_promise"
+    ],
+    "show_cards_gathered": true,
+    "afterword": {
+      "speaker": "fatima_sheikh",
+      "to": "the insurer's investigator, three weeks later",
+      "clean": "They brought me evidence. Most people bring me a story.",
+      "partial": "No opinion.",
+      "dark": null,
+      "dark_note": "Fatima does not mention you to anyone. The debrief says so: 'Fatima Sheikh did not mention you.'",
+      "loss": "No opinion."
+    }
+  }
+}

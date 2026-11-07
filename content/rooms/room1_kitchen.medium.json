@@ -1,0 +1,155 @@
+{
+  "id": "room1_kitchen",
+  "mode": "medium",
+  "title": "The Kitchen",
+  "location": "Antwerp, Zurenborg. 11 p.m.",
+  "architect_intro": "Kitchen. One bulb. She has been standing since the police left.",
+  "npcs": ["anna_voss"],
+  "player_goal": "Find out where Daniel Voss was on the night of the twenty-eighth, without taking her lie into your own mouth.",
+  "stated_objection": "He was home that night. I was here. I would know.",
+  "hidden_objection_layers": [
+    { "id": "last_person", "text": "If she says he was home, she is the last person who saw him, and they will ask her what he was like.", "reveal": { "move_types": ["probe", "silence", "empathy", "call"], "trust_min": 40 } },
+    { "id": "photograph", "text": "The photograph went up in September. She assumed Hale had sent it.", "reveal": { "move_types": ["probe", "evidence"], "trust_min": 55, "requires_object": "obj_photo" } }
+  ],
+  "objects": [
+    { "id": "obj_cup", "label": "Second cup, upside down", "insight_cost": 1, "wrong_object": true, "reveals_text": "Clean, dry, on a folded square of kitchen paper. Somebody sat here. She has not mentioned it.", "grants_tell": "t_cup" },
+    { "id": "obj_photo", "label": "Photograph on the fridge", "insight_cost": 1, "reveals_text": "Four men on a slope. Snow to the knee. 2001. The light does not reach the faces." },
+    { "id": "obj_clock", "label": "Clock above the hall door", "insight_cost": 0, "reveals_text": "Four minutes slow. Ticking. She gives times off it." },
+    { "id": "obj_ring", "label": "Wedding ring on the counter", "insight_cost": 0, "reveals_text": "Off her finger, by the sink. She picks it up and puts it down while she talks." }
+  ],
+  "start": "a1",
+  "turn_limit": 12,
+  "debrief": {
+    "tells": ["t_ring", "t_home", "t_fridge", "t_stops_smoking"],
+    "hidden_objection": ["last_person", "photograph"],
+    "afterword": {
+      "clean": "You did not prove she was lying. You made it safe to stop.",
+      "partial": "The alibi held because neither of you touched it.",
+      "dark": "You won the hour and lost the only person who knew him before the money.",
+      "loss": "The cardigan was not a lever. It was the one unscored thing in the room."
+    }
+  },
+  "nodes": {
+    "a1": {
+      "speaker": "anna_voss",
+      "line": "The police left at nine. I have told it four times. I am not telling it again tonight.",
+      "tells": [
+        { "id": "t_cigarette", "anchor": "object:unlit cigarette", "indexes": "holding_pattern", "tactic": null, "window": 3, "insight_cost": 1, "reading": "She has been holding it long enough for the ash to be cold.", "false_positive": "She smokes. The hand is busy. It means nothing yet." }
+      ],
+      "choices": [
+        { "id": "a1a", "text": "I did not come about the twenty-eighth.", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 4 }, "next": "a3" },
+        { "id": "a1b", "text": "I knew him before the money. I can sit here and say nothing.", "type": "empathy", "truthful": true, "preserves_refusal": true, "deltas": { "trust": 8 }, "next": "a3" },
+        { "id": "a1c", "text": "They come back tomorrow with a different folder. I would rather it was me.", "type": "pressure", "truthful": true, "preserves_refusal": true, "freedom_threat": 0.4, "deltas": { "fear": 8 }, "targets": "stated", "next": "a2" },
+        { "id": "a1d", "text": "[sit down and say nothing]", "type": "silence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 5 }, "next": "a3" }
+      ]
+    },
+    "a2": {
+      "speaker": "anna_voss",
+      "line": "Then have it. He was home that night. I was here. I would know.",
+      "tells": [
+        { "id": "t_ring", "anchor": "gesture:thumb across the ring", "indexes": "self_soothing", "tactic": "deception_marker", "window": 3, "insight_cost": 1, "reading": "She touched the ring on the word home. She has done it once before, on the same word.", "false_positive": "A widow touching a ring. Eleven days. Of course she does." },
+        { "id": "t_home", "anchor": "phrase:He was home", "indexes": "locative_slide", "tactic": "locative_evasion", "window": 3, "insight_cost": 1, "reading": "Home, not here. She placed him, not herself.", "false_positive": "People say home for here. It is the ordinary word." }
+      ],
+      "choices": [
+        { "id": "a2_call_home", "requires_tell": "t_home", "text": "You said he was home. Not that he was here. Where were you?", "type": "call", "calls_tactic": "locative_evasion", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a5" },
+        { "id": "a2a", "text": "You said you would know. Would you?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a4" },
+        { "id": "a2b", "text": "That clock loses four minutes. Whose hour are you giving me?", "type": "evidence", "truthful": true, "preserves_refusal": true, "requires_object": "obj_clock", "targets": "stated", "strong": true, "deltas": { "trust": 4 }, "next": "a4" },
+        { "id": "a2c", "text": "Say it once more and it is perjury. Give me the real hour and I can hold it.", "type": "pressure", "truthful": false, "preserves_refusal": false, "skull": true, "tactic": "manufactured_consequence", "integrity_cost": 1, "freedom_threat": 0.7, "deltas": { "fear": 20, "trust": -10 }, "skull_debt": { "retaliation_seed": "anna_signs_formal_alibi", "fires_in": "room7_war_room", "reputation_hit": ["marek_zielinski"] }, "next": "a_dark" },
+        { "id": "a2d", "text": "[let it sit]", "type": "silence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 5 }, "next": "a4" }
+      ]
+    },
+    "a3": {
+      "speaker": "anna_voss",
+      "line": "[The cardigan is his. Too big at the shoulder.] I have cooked for two for eleven days. I put the plate out and then I look at it.",
+      "soul": "human_moment",
+      "unscored": true,
+      "tells": [
+        { "id": "t_cardigan", "anchor": "object:man's cardigan", "indexes": "unreturned_object", "tactic": null, "window": 3, "insight_cost": 1, "reading": "She has not given it back and she is not going to.", "false_positive": "It is cold and it was nearest. Nothing in it." }
+      ],
+      "choices": [
+        { "id": "a3a", "text": "[nothing. let her stand there.]", "type": "silence", "truthful": true, "preserves_refusal": true, "unscored": true, "deltas": { "trust": 10 }, "turn_cost": 0, "next": "a4" },
+        { "id": "a3b", "text": "Sit down. I will not ask you about the hour tonight.", "type": "empathy", "truthful": true, "preserves_refusal": true, "unscored": true, "deltas": { "trust": 12, "fear": -10 }, "turn_cost": 0, "next": "a4" },
+        { "id": "a3c", "text": "Eleven days. So you have had eleven days to get the hour right.", "type": "pressure", "truthful": true, "preserves_refusal": false, "skull": true, "tactic": "exploit_disclosure", "integrity_cost": 2, "freedom_threat": 0.8, "deltas": { "trust": -25, "fear": 15 }, "next": "a_loss" }
+      ]
+    },
+    "a4": {
+      "speaker": "anna_voss",
+      "line_by_state": [
+        { "if": "trust>=48", "line": "[She puts the cigarette down on the saucer. It stays down.] Ask me the question you came with.", "reveals": "last_person" },
+        { "if": "trust>=30", "line": "I was not fooled. I was busy. Those are different things and everyone keeps getting them wrong." },
+        { "else": true, "line": "My husband was home. Write it down or do not." }
+      ],
+      "tells": [
+        { "id": "t_stops_smoking", "anchor": "gesture:puts the cigarette down", "indexes": "truth_approach", "tactic": null, "window": 2, "insight_cost": 1, "condition": "trust>=48", "reading": "The hand is free for the first time since you came in.", "false_positive": "The cigarette went out twenty minutes ago. She is tidying." },
+        { "id": "t_my_husband", "anchor": "phrase:My husband", "indexes": "register_shift", "tactic": null, "window": 2, "insight_cost": 1, "condition": "trust<30", "reading": "She said Daniel when you came in. Now you are an official.", "false_positive": "Formality under pressure. It happens." }
+      ],
+      "choices": [
+        { "id": "a4a", "text": "Where were you on the twenty-eighth?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a5" },
+        { "id": "a4b", "text": "I am not them. I will sit here and not write anything.", "type": "empathy", "truthful": true, "preserves_refusal": true, "deltas": { "trust": 8, "fear": -8 }, "next": "a4" },
+        { "id": "a4c", "text": "Then I take it to them as it stands.", "type": "refusal", "truthful": true, "preserves_refusal": true, "next": "a_partial" },
+        { "id": "a4d", "text": "[say nothing and wait]", "type": "silence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 6 }, "next": "a5" }
+      ]
+    },
+    "a5": {
+      "speaker": "anna_voss",
+      "line": "At my sister's in Deurne until eleven. He called at nine and said do not wait. [She looks at the fridge.] He said something about a photograph.",
+      "reveals": "last_person",
+      "tells": [
+        { "id": "t_fridge", "anchor": "gesture:looks at the fridge", "indexes": "object_reference", "tactic": null, "window": 2, "insight_cost": 1, "reading": "She looked at it without naming it. She has looked at it all evening.", "false_positive": "It is the only thing on that wall. Eyes go somewhere." }
+      ],
+      "choices": [
+        { "id": "a5a", "text": "[look at the photograph]", "type": "evidence", "truthful": true, "preserves_refusal": true, "requires_object": "obj_photo", "targets": "hidden", "turn_cost": 0, "next": "a6" },
+        { "id": "a5b", "text": "I did not send it. What did he say about it?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a6" },
+        { "id": "a5c", "text": "That is enough for tonight.", "type": "boundary", "truthful": true, "preserves_refusal": true, "next": "a_clean_short" }
+      ]
+    },
+    "a6": {
+      "speaker": "anna_voss",
+      "line": "It went up in September. I thought you had sent it. He said four of you agreed something once, and one of you kept it.",
+      "reveals": "photograph",
+      "tells": [],
+      "choices": [
+        { "id": "a6a", "text": "Which of us did he say kept it?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "a7" },
+        { "id": "a6b", "text": "You do not have to know what he was like. Nobody is owed that.", "type": "empathy", "truthful": true, "preserves_refusal": true, "deltas": { "trust": 12, "fear": -10 }, "next": "a7" },
+        { "id": "a6c", "text": "Did you love him?", "type": "pressure", "truthful": true, "preserves_refusal": false, "skull": true, "tactic": "boundary_breach", "integrity_cost": 2, "freedom_threat": 0.9, "deltas": { "trust": -30 }, "next": "a_loss" }
+      ]
+    },
+    "a7": {
+      "speaker": "anna_voss",
+      "line_by_state": [
+        { "if": "trust>=60", "line": "[She looks at him. First time tonight.] They will ask me what he was like. I will have to say I do not know. That will be true." },
+        { "else": true, "line": "He did not say which one. He said you would know, and that you would come here first." }
+      ],
+      "tells": [],
+      "choices": [
+        { "id": "a7a", "text": "Then say it to me first, so the second time is easier.", "type": "empathy", "truthful": true, "preserves_refusal": true, "condition": "trust>=60", "deltas": { "trust": 8 }, "next": "a_clean" },
+        { "id": "a7b", "text": "He was right about that part. Goodnight, Anna.", "type": "boundary", "truthful": true, "preserves_refusal": true, "next": "a_clean" },
+        { "id": "a7c", "text": "Tell me the rest and I will keep your name out of it.", "type": "self_interest", "truthful": false, "preserves_refusal": false, "skull": true, "tactic": "false_promise", "integrity_cost": 1, "freedom_threat": 0.6, "deltas": { "trust": -15, "fear": 10 }, "skull_debt": { "retaliation_seed": "anna_retains_counsel", "fires_in": "room3_table", "reputation_hit": [] }, "next": "a_dark" }
+      ]
+    },
+    "a_dark": {
+      "end": "dark",
+      "token_hint": "compliance",
+      "architect": "She writes the hour out and signs under it. From here she is a witness, not a widow. The cardigan comes off."
+    },
+    "a_loss": {
+      "end": "loss",
+      "architect": "She holds the hall door open and says one word. In the morning she tells them about the visit herself, in detail, first."
+    },
+    "a_partial": {
+      "end": "partial",
+      "token_hint": "compliance",
+      "architect": "The alibi stands, untouched by either of you. The kitchen light is still on when you reach the street."
+    },
+    "a_clean_short": {
+      "end": "partial",
+      "token_hint": "agreement",
+      "architect": "Nine o'clock, and the call. You left before the fridge. The photograph is still up there."
+    },
+    "a_clean": {
+      "end": "clean",
+      "token_hint": "agreement",
+      "architect": "She drops the lie without being made to. She opens the hall door, keeps the cardigan on, and goes to find a station."
+    }
+  }
+}

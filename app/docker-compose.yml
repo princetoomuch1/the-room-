@@ -1,0 +1,16 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      CONTENT_DIR: /content
+      CORS_ORIGINS: "http://localhost:8080"
+    volumes:
+      - ../content:/content:ro
+    ports: ["8000:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+  frontend:
+    build: ./frontend
+    depends_on: [backend]
+    ports: ["8080:80"]

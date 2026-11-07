@@ -1,0 +1,8 @@
+{
+  "id": "mieke_carpentier",
+  "name": "Mieke Carpentier",
+  "archetype": "benevolent_closer",
+  "contacts": [],
+  "traits": {"C":85,"A":70,"N":25,"trust":55,"composure":90,"comprehension":95,"liberty":45,"reactance":70},
+  "soul_sheet": "docs/02a_soul_sheets_antwerp.md"
+}

@@ -1,0 +1,38 @@
+/* Palette from the design bible §1: bone, ochre, burnt sienna, oxide red, indigo, arsenic green, one gold. */
+:root {
+  --bone: #e9e1cf; --ochre: #b5852f; --sienna: #8a3b1c; --oxide: #6e2a20;
+  --indigo: #23283f; --arsenic: #3e5b48; --gold: #c9a227; --ink: #1b1712; --grey: #8d9093;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--ink); color: var(--bone); font-family: Georgia, "Times New Roman", serif; line-height: 1.5; }
+main { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 6rem; }
+.lettered { font-family: "Brush Script MT", Georgia, serif; font-weight: normal; letter-spacing: .02em; color: var(--bone); }
+.architect { font-style: italic; color: #cfc6b2; }
+.row { display: flex; gap: .75rem; flex-wrap: wrap; }
+button { font: inherit; color: var(--ink); background: var(--bone); border: 1px solid var(--sienna); padding: .6rem 1rem; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.door { background: var(--sienna); color: var(--bone); min-width: 9rem; text-transform: capitalize; }
+.canvas { height: 220px; margin: 1rem 0; background: radial-gradient(ellipse at 30% 20%, rgba(201,162,39,.35), transparent 45%), linear-gradient(160deg, var(--oxide), var(--ink) 70%); border: 1px solid #000; }
+.room-room9_mirror .canvas { background: linear-gradient(#bfc3c6, #8d9093); }
+.room-war_room .canvas { background: radial-gradient(ellipse at 52% 8%, rgba(201,162,39,.3), transparent 40%), linear-gradient(160deg, var(--arsenic), var(--ink) 75%); }
+blockquote.line { font-size: 1.15rem; border-left: 3px solid var(--ochre); margin: 0; padding: .5rem 1rem; }
+.tells { list-style: none; padding: 0; display: flex; gap: .5rem; flex-wrap: wrap; }
+.tell { background: transparent; color: var(--gold); border: 1px dashed var(--gold); font-size: .9rem; }
+.reading { background: #2a241c; padding: .75rem 1rem; border-left: 3px solid var(--gold); }
+.choices { padding-left: 1.2rem; }
+.choice { width: 100%; text-align: left; margin: .35rem 0; }
+.choice.strong { box-shadow: inset 4px 0 0 var(--gold); }
+.choice.skull { background: #d9cfb8; }
+.skull-mark { margin-right: .5rem; color: var(--oxide); }
+.insight { color: var(--gold); letter-spacing: .2em; }
+header { display: flex; justify-content: space-between; align-items: baseline; }
+.debrief { background: #f1e9d6; color: var(--ink); padding: 1.5rem; }
+.debrief .lettered { color: var(--ink); }
+.afterword { font-style: italic; }
+.modal { position: fixed; inset: 10% 10%; background: #f1e9d6; color: var(--ink); padding: 2rem; overflow: auto; z-index: 10; }
+.crisis { position: fixed; bottom: 0; left: 0; right: 0; background: var(--indigo); color: var(--bone); padding: .6rem 1rem; font-size: .95rem; }
+.modal .crisis { position: static; }
+.crisis a { color: var(--gold); }
+.crisis ul { margin: .3rem 0 0; padding-left: 1.2rem; }
+.error { background: var(--oxide); padding: .5rem 1rem; }
+.cards .card { display: block; margin: .3rem 0; }

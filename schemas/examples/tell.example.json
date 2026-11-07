@@ -1,0 +1,10 @@
+{
+  "id": "t_after_week",
+  "anchor": "phrase:After this week.",
+  "indexes": "delay",
+  "tactic": "delay",
+  "window": 3,
+  "insight_cost": 1,
+  "reading": "A stall with no reason attached.",
+  "false_positive": "Real caution. Guarantor papers are serious. Asking a CA is sensible."
+}

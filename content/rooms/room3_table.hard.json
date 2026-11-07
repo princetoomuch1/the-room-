@@ -1,0 +1,33 @@
+{
+  "base": "room3_table.medium",
+  "mode": "hard",
+  "npc_trait_overrides": { "ramesh_deshpande": { "narc_vulnerable": 80, "shame_proneness": 85 } },
+  "tell_window_default": 1,
+  "hidden_objection_layers_add": [
+    { "id": "repeated_father", "after": "worthless", "text": "He knows he did to you what his father did to him, and it is unbearable to be seen knowing it.", "reveal": { "move_types": ["silence", "empathy"], "trust_min": 60, "requires_object": "obj_photo" } }
+  ],
+  "clean_requires": ["call:triangulation"],
+  "second_delayed_cost": { "on": ["partial", "dark", "loss"], "fires_in": "room4_deposit", "event": "father_not_at_airport", "text": "He did not come to the airport. Your mother came alone." },
+  "inherit_skull_debt": { "from": "room1_kitchen", "event": "hemant_withdraws_guarantee", "opening_line": "Your Hemu-mama called. He says you spoke to him like a recovery agent. [He doesn't look up.] Is this what London teaches?" },
+  "patch_nodes": {
+    "t2": {
+      "line": "Career. [He turns toward the kitchen.] Shobha! Come and tell your child what it did to you when your brother went to Dubai. Tell them. [To you] Ask her what it did to her.",
+      "tells": [
+        { "id": "t_triangulate", "anchor": "phrase:Ask her what it did to her.", "indexes": "triangulation", "tactic": "triangulation", "window": 1, "insight_cost": 1, "reading": "Surprise tactic: he's bringing your mother in as a third party.", "false_positive": "Your mother really was hurt when her brother left. It's a real story." }
+      ],
+      "choices_add": [
+        { "id": "t2_call_tri", "requires_tell": "t_triangulate", "text": "Baba. Aai can tell me herself, later. Right now it's you and me. What's it doing to you?", "type": "call", "calls_tactic": "triangulation", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 8 }, "next": "t6" }
+      ]
+    },
+    "t6": {
+      "line_by_state": [
+        { "if": "revealed:worthless && trust>=60", "line": "[He turns the photograph face-up. Looks at it. Turns it down again.] He took my letter. And I didn't even need to take yours. I just waited, every day, for you to say it. That's worse. I know that's worse. [Pause.] Don't look at me like that. Ramu, enough.", "reveals": "repeated_father" },
+        { "if": "trust>=45", "line": "My father wanted accountancy. I wanted COEP. He took my letter from the post. What is it worth, if nobody wants it.", "reveals": "worthless" },
+        { "else": true, "line": "Nothing is easier. Eat." }
+      ],
+      "choices_add": [
+        { "id": "t6_repeat", "condition": "revealed:repeated_father", "text": "[say nothing for a moment. Then:] I'm still going, Baba. And I still want your help with the tax. Both things.", "type": "boundary", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "t7" }
+      ]
+    }
+  }
+}

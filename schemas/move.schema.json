@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "move.schema.json",
+  "title": "Move (choice)",
+  "type": "object",
+  "required": [
+    "id",
+    "text",
+    "type",
+    "truthful",
+    "preserves_refusal",
+    "next"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "empathy",
+        "self_interest",
+        "evidence",
+        "social_proof",
+        "pressure",
+        "scarcity",
+        "flattery",
+        "naming",
+        "boundary",
+        "silence",
+        "refusal",
+        "probe",
+        "call",
+        "concession"
+      ]
+    },
+    "truthful": {
+      "type": "boolean"
+    },
+    "preserves_refusal": {
+      "type": "boolean"
+    },
+    "skull": {
+      "type": "boolean"
+    },
+    "tactic": {
+      "type": "string"
+    },
+    "calls_tactic": {
+      "type": "string"
+    },
+    "targets": {
+      "enum": [
+        "stated",
+        "hidden"
+      ]
+    },
+    "strong": {
+      "type": "boolean"
+    },
+    "rebuttal": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "weak": {
+          "type": "boolean"
+        }
+      }
+    },
+    "freedom_threat": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "integrity_cost": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "vulnerable_target": {
+      "type": "boolean"
+    },
+    "deltas": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "deltas_npc": {
+      "type": "object"
+    },
+    "skull_debt": {
+      "type": "object",
+      "properties": {
+        "retaliation_seed": {
+          "type": "string"
+        },
+        "fires_in": {
+          "type": "string"
+        },
+        "reputation_hit": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "commitment_decay": {
+          "type": "number"
+        }
+      }
+    },
+    "condition": {
+      "type": "string"
+    },
+    "requires_tell": {
+      "type": "string"
+    },
+    "requires_flag": {
+      "type": "string"
+    },
+    "reveals": {
+      "type": "string"
+    },
+    "grants_card": {
+      "type": "string"
+    },
+    "sets_flag": {
+      "type": "string"
+    },
+    "turn_cost": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "action": {
+      "enum": [
+        "present_evidence",
+        "open_objects"
+      ]
+    },
+    "max_cards": {
+      "type": "integer"
+    },
+    "next": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "truthful": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "skull": {
+            "const": true
+          }
+        },
+        "required": [
+          "skull",
+          "integrity_cost"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "preserves_refusal": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "skull": {
+            "const": true
+          }
+        },
+        "required": [
+          "skull",
+          "integrity_cost"
+        ]
+      }
+    }
+  ]
+}

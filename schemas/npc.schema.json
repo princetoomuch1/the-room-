@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "npc.schema.json",
+  "title": "NPC",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "archetype",
+    "traits",
+    "contacts",
+    "soul_sheet"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "archetype": {
+      "type": "string"
+    },
+    "traits": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+      },
+      "description": "Any of the 114 trait keys in engine/traits.py, or factor overrides (A,N,E,O,C,D,mach,narc,psych,IQ)."
+    },
+    "contacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "NPCs who receive wariness when this NPC detects a skull."
+    },
+    "soul_sheet": {
+      "type": "string"
+    },
+    "portrait": {
+      "type": "string"
+    },
+    "vulnerable": {
+      "type": "boolean"
+    }
+  }
+}

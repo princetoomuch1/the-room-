@@ -1,0 +1,8 @@
+{
+  "base": "room4_deposit.medium",
+  "mode": "hard",
+  "overlay_rules": "Patches replace fields on named nodes. Tell windows not listed default to 1.",
+  "tell_window_default": 1,
+  "clean_requires": [],
+  "second_delayed_cost": { "on": ["dark", "loss"], "fires_in": "room7_war_room", "event": "no_corroboration", "text": "Nobody can corroborate the flat. The tenant is not in the country." }
+}

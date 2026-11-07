@@ -1,0 +1,16 @@
+{
+  "id": "karan_sethi",
+  "name": "Karan Sethi",
+  "archetype": "live_wire",
+  "contacts": [],
+  "traits": {
+    "psych_secondary": 70,
+    "N": 75,
+    "impulse_control": 20,
+    "baseline_anger": 75,
+    "trust": 40,
+    "comprehension": 70,
+    "liberty": 70
+  },
+  "soul_sheet": "docs/02_soul_sheets.md"
+}

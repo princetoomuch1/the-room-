@@ -1,0 +1,21 @@
+{
+  "id": "operator",
+  "title": "The Operator",
+  "selection": {
+    "priority": 2,
+    "rule": "integrity<=4 && wins>=5"
+  },
+  "prose_ref": "docs/06_endings.md#the-operator",
+  "conditional_lines": [
+    {
+      "when": "calls_made",
+      "replace": "{call_list}",
+      "with": "names of NPCs targeted by each correct CALL, in room order, then 'the Mirror'"
+    },
+    {
+      "when": "len(calls_made)<5",
+      "replace": "You called nineteen tactics",
+      "with": "You called {n} tactics by their proper names. You used more than that."
+    }
+  ]
+}

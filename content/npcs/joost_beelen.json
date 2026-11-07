@@ -1,0 +1,8 @@
+{
+  "id": "joost_beelen",
+  "name": "Joost Beelen",
+  "archetype": "bureaucrat",
+  "contacts": [],
+  "traits": {"C":90,"A":45,"N":60,"trust":40,"procedural_rigidity":85,"comprehension":70,"liberty":30,"guilt":65},
+  "soul_sheet": "docs/02a_soul_sheets_antwerp.md"
+}

@@ -1,0 +1,18 @@
+{
+  "region": "BE",
+  "registry_status": "NUMBERS_SOURCE_VERIFIED_PENDING_HUMAN_SIGNOFF",
+  "verified_against": [
+    "catalog.be.brussels (Brussels regional government, Emergency services and hotlines)",
+    "brusselstimes.com (Suicide Line: 1813 Dutch, 0800 32 123 French, 02 648 40 14 English)",
+    "therapyroute.com Belgium crisis line directory"
+  ],
+  "checked_on": "2026-11-08",
+  "checked_by": "builder (source-verified); requires human sign-off by Prince K. Parmar before status becomes VERIFIED",
+  "next_quarterly_check": "2027-02-08",
+  "lines": [
+    {"name": "Emergency", "number": "112", "lang": "all", "hours": "24/7"},
+    {"name": "Zelfmoordlijn", "number": "1813", "lang": "Dutch", "hours": "24/7"},
+    {"name": "Centre de Prévention du Suicide", "number": "0800 32 123", "lang": "French", "hours": "24/7"},
+    {"name": "Community Help Service", "number": "02 648 40 14", "lang": "English", "hours": "24/7"}
+  ]
+}

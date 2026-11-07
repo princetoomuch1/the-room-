@@ -1,0 +1,54 @@
+{
+  "schema": "crisis_resources.v1",
+  "max_age_days": 100,
+  "review_cadence": "quarterly",
+  "owner": "content-safety@team",
+  "note": "Every entry must be re-verified against the provider's own website each quarter. CI fails if any last_verified is older than max_age_days. Update last_verified only after a human has checked the number on the official source. Entries marked PENDING_HUMAN_CHECK carry numbers from the design brief and must be checked by a person before a release build (scripts/check_crisis_registry.py --release fails on them).",
+  "entries": [
+    {
+      "region": "IN",
+      "country": "India",
+      "services": [
+        {
+          "name": "Tele-MANAS (Government of India)",
+          "phone": "14416",
+          "alt_phone": "1-800-891-4416",
+          "hours": "24/7",
+          "languages": "Multiple Indian languages",
+          "source": "https://telemanas.mohfw.gov.in"
+        }
+      ],
+      "last_verified": "2026-11-08",
+      "verified_by": "PENDING_HUMAN_CHECK"
+    },
+    {
+      "region": "US",
+      "country": "United States",
+      "services": [
+        {
+          "name": "988 Suicide & Crisis Lifeline",
+          "phone": "988",
+          "sms": "988",
+          "hours": "24/7",
+          "source": "https://988lifeline.org"
+        }
+      ],
+      "last_verified": "2026-11-08",
+      "verified_by": "PENDING_HUMAN_CHECK"
+    },
+    {
+      "region": "GB",
+      "country": "United Kingdom and Ireland",
+      "services": [
+        {
+          "name": "Samaritans",
+          "phone": "116 123",
+          "hours": "24/7",
+          "source": "https://www.samaritans.org"
+        }
+      ],
+      "last_verified": "2026-11-08",
+      "verified_by": "PENDING_HUMAN_CHECK"
+    }
+  ]
+}

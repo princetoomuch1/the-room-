@@ -1,0 +1,11 @@
+{
+  "id": "k4a",
+  "condition": "revealed:overdraft",
+  "text": "Thank you for telling me. The bank takes a fixed-deposit lien instead of statements. I checked. Can we go Saturday, together?",
+  "type": "self_interest",
+  "truthful": true,
+  "preserves_refusal": true,
+  "targets": "hidden",
+  "reciprocity": true,
+  "next": "k6"
+}

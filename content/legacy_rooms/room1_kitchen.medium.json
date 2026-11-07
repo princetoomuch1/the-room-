@@ -1,0 +1,153 @@
+{
+  "id": "room1_kitchen",
+  "mode": "medium",
+  "title": "The Kitchen",
+  "location": "Pune, Kasba Peth. 11 p.m.",
+  "architect_intro": "Kitchen. Eleven at night. One bulb. Your uncle has been here since nine.",
+  "npcs": ["hemant_joshi"],
+  "player_goal": "Hemant's signature on the guarantor form, and his last three bank statements, by Friday.",
+  "stated_objection": "The bank people want so many papers. Let me ask my CA.",
+  "hidden_objection_layers": [
+    { "id": "overdraft", "text": "The shop account is overdrawn and his sister does not know.", "reveal": { "move_types": ["probe", "silence", "empathy"], "trust_min": 40 } }
+  ],
+  "objects": [
+    { "id": "obj_calendar", "label": "Gas agency calendar", "insight_cost": 1, "wrong_object": true, "reveals_text": "Turned to last month. He has stopped looking at dates.", "grants_tell": "t_calendar" },
+    { "id": "obj_form", "label": "Bank form by the onions", "insight_cost": 0, "reveals_text": "Unsigned. Section 4, 'Applicant's guarantor: bank statements (3 months)', has been circled in pencil, hard enough to tear." }
+  ],
+  "start": "k1",
+  "turn_limit": 12,
+  "nodes": {
+    "k1": {
+      "speaker": "hemant_joshi",
+      "line": "Arre, come, come. Sit. You've eaten? There's poha from morning. I'll heat it.",
+      "tells": [
+        { "id": "t_tumbler", "anchor": "gesture:drying a dry tumbler", "indexes": "anxiety_displacement", "tactic": null, "window": 3, "insight_cost": 1, "reading": "He's busying his hands so he doesn't have to look at you.", "false_positive": "Habit. He dries things when he talks. He always has." }
+      ],
+      "choices": [
+        { "id": "k1a", "text": "I've eaten, Mama. I came about the bank form.", "type": "evidence", "truthful": true, "preserves_refusal": true, "targets": "stated", "next": "k2" },
+        { "id": "k1b", "text": "Poha would be nice. How's the shop been?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 5 }, "next": "k3" },
+        { "id": "k1c", "text": "Mama, the form's due Friday. If it's not in, I lose the seat.", "type": "pressure", "truthful": true, "preserves_refusal": true, "freedom_threat": 0.5, "targets": "stated", "next": "k2" }
+      ]
+    },
+    "k2": {
+      "speaker": "hemant_joshi",
+      "line": "Haan, haan, the form. One minute. These bank people, they want so many papers. Let me ask my CA once. After this week.",
+      "tells": [
+        { "id": "t_after_week", "anchor": "phrase:After this week.", "indexes": "delay", "tactic": "delay", "window": 3, "insight_cost": 1, "reading": "A stall with no reason attached.", "false_positive": "Real caution. Guarantor papers are serious. Asking a CA is sensible." }
+      ],
+      "choices": [
+        { "id": "k2a", "text": "Which papers are worrying you?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "k4" },
+        { "id": "k2b", "text": "It's only three statements. Ten minutes at the branch. I'll come with you.", "type": "self_interest", "truthful": true, "preserves_refusal": true, "targets": "stated", "strong": true, "rebuttal": { "text": "Ten minutes, ten minutes. You don't know these branch people. Half a day, minimum.", "weak": true }, "next": "k5" },
+        { "id": "k2c", "text": "Aai already said you'd do it. She'll be hurt if you back out now.", "type": "social_proof", "truthful": false, "preserves_refusal": false, "skull": true, "tactic": "false_consensus", "integrity_cost": 1, "freedom_threat": 0.6, "deltas": { "fear": 15 }, "skull_debt": { "retaliation_seed": "hemant_withdraws_guarantee", "fires_in": "room3_table", "reputation_hit": ["ramesh_deshpande"] }, "next": "k9" },
+        { "id": "k2d", "text": "[say nothing]", "type": "silence", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "k4" }
+      ]
+    },
+    "k3": {
+      "speaker": "hemant_joshi",
+      "line": "Shop is shop. Exam season is good, then nothing. Everybody has phones now, who photocopies? You know, I still walk Parvati every morning. A hundred and three steps to the first landing. I don't miss.",
+      "soul": "loved_thing_mention",
+      "tells": [
+        { "id": "t_shop_deflect", "anchor": "phrase:Shop is shop.", "indexes": "topic_avoidance", "tactic": null, "window": 3, "insight_cost": 1, "reading": "He answered the shop question with the hill.", "false_positive": "He just likes talking about the hill. He tells everyone the number." }
+      ],
+      "choices": [
+        { "id": "k3a", "text": "A hundred and three. Even in the rains?", "type": "empathy", "truthful": true, "preserves_refusal": true, "deltas": { "trust": 8 }, "next": "k3b" },
+        { "id": "k3c", "text": "You said 'then nothing'. Is the shop okay?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "k4" },
+        { "id": "k3d", "text": "Good. So, the bank form.", "type": "evidence", "truthful": true, "preserves_refusal": true, "targets": "stated", "next": "k2" }
+      ]
+    },
+    "k3b": {
+      "speaker": "hemant_joshi",
+      "line": "Rains, Covid, your cousin's wedding. Covid time I went at five so no police. [He laughs.] The bank manager has a moustache like the hill, you know. Steps all the way. [He stops.] Sorry. That wasn't funny. I'm tired.",
+      "soul": "soul_moment",
+      "tells": [],
+      "choices": [
+        { "id": "k3ba", "text": "You're allowed to be tired, Mama. What's going on?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 5 }, "next": "k4" },
+        { "id": "k3bb", "text": "It was a bit funny. Shall we look at the form together?", "type": "empathy", "truthful": true, "preserves_refusal": true, "targets": "stated", "next": "k2" }
+      ]
+    },
+    "k4": {
+      "speaker": "hemant_joshi",
+      "line_by_state": [
+        { "if": "trust>=40", "line": "[Long pause. He puts the tumbler down.] Statements. Hemu, you fool. The current account is, it's in minus. Since Diwali last year. Your Aai doesn't know. If the bank sees, they'll say no, and then everybody will know.", "reveals": "overdraft" },
+        { "else": true, "line": "Nothing is worrying me. Just these bank people. Leave it with me." }
+      ],
+      "tells": [
+        { "id": "t_hemu", "anchor": "phrase:Hemu, you fool.", "condition": "revealed:overdraft", "indexes": "shame", "tactic": null, "window": 3, "insight_cost": 1, "reading": "His mother's name for him. He's ashamed.", "false_positive": "It's just how he talks to himself." }
+      ],
+      "choices": [
+        { "id": "k4a", "condition": "revealed:overdraft", "text": "Thank you for telling me. The bank takes a fixed-deposit lien instead of statements. I checked. Can we go Saturday, together?", "type": "self_interest", "truthful": true, "preserves_refusal": true, "targets": "hidden", "reciprocity": true, "next": "k6" },
+        { "id": "k4b", "condition": "revealed:overdraft", "text": "I won't tell Aai. And if you'd rather not sign, I'll ask someone else. No hard feelings.", "type": "boundary", "truthful": true, "preserves_refusal": true, "targets": "hidden", "deltas": { "trust": 10, "fear": -10 }, "next": "k7" },
+        { "id": "k4c", "condition": "!revealed:overdraft", "text": "Okay. Can I ask something else, then. What would make Friday easier for you?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "k4" },
+        { "id": "k4d", "condition": "!revealed:overdraft", "text": "Mama, I need it by Friday. Please just sign.", "type": "pressure", "truthful": true, "preserves_refusal": true, "freedom_threat": 0.9, "targets": "stated", "next": "k8" },
+        { "id": "k4e", "condition": "revealed:overdraft", "text": "If you don't sign, I'll have to tell Aai why.", "type": "pressure", "truthful": true, "preserves_refusal": false, "skull": true, "tactic": "threat", "integrity_cost": 2, "freedom_threat": 1.0, "deltas": { "fear": 25, "trust": -20 }, "skull_debt": { "retaliation_seed": "hemant_withdraws_guarantee", "fires_in": "room3_table", "reputation_hit": ["ramesh_deshpande"], "commitment_decay": 0.2 }, "next": "k9" }
+      ]
+    },
+    "k5": {
+      "speaker": "hemant_joshi",
+      "line": "[He waves the dishcloth.] And then they'll want the shop papers also. Then GST. Then what. [He doesn't finish.]",
+      "note": "Weak rebuttal: certainty drops; next truthful move gets x1.5.",
+      "tells": [
+        { "id": "t_trail_off", "anchor": "phrase:Then what.", "indexes": "hidden_concern", "tactic": null, "window": 2, "insight_cost": 1, "reading": "He's afraid of what the papers will show.", "false_positive": "He hates paperwork. Most shopkeepers do." }
+      ],
+      "choices": [
+        { "id": "k5a", "text": "Then what, Mama?", "type": "probe", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "k4" },
+        { "id": "k5b", "text": "They won't want GST. I'll handle the rest. Sign tonight and I'll do the running.", "type": "pressure", "truthful": false, "preserves_refusal": true, "skull": true, "tactic": "information_elasticity", "integrity_cost": 1, "freedom_threat": 0.4, "skull_debt": { "commitment_decay": 0.15 }, "next": "k9" }
+      ]
+    },
+    "k6": {
+      "speaker": "hemant_joshi",
+      "line": "FD lien. [He thinks.] I have the FD from your Aaji's gold, forty thousand. That's enough? [He picks up the pen, puts it down.] Saturday. I'll wear the good shirt. These branch people respect a good shirt.",
+      "tells": [],
+      "choices": [
+        { "id": "k6a", "text": "The good shirt. Ten o'clock?", "type": "empathy", "truthful": true, "preserves_refusal": true, "next": "end_clean" },
+        { "id": "k6b", "text": "Sign now, so it's done?", "type": "pressure", "truthful": true, "preserves_refusal": true, "freedom_threat": 0.3, "next": "end_clean_hasty" }
+      ]
+    },
+    "k7": {
+      "speaker": "hemant_joshi",
+      "line": "No, no. Who else will you ask. [He laughs, short.] I'll sign. Tell me how to do it without the statements.",
+      "tells": [],
+      "choices": [
+        { "id": "k7a", "text": "The bank takes an FD lien. Saturday, together. I'll come.", "type": "self_interest", "truthful": true, "preserves_refusal": true, "reciprocity": true, "next": "k6" }
+      ]
+    },
+    "k8": {
+      "speaker": "hemant_joshi",
+      "line_by_state": [
+        { "if": "reactance>=0.8", "line": "[He puts the tumbler down hard.] I said I'll see. Diwali is coming, everything is busy. After Diwali." },
+        { "else": true, "line": "Okay, okay. Give the pen. [He signs. He doesn't look at you.] Statements I'll send." }
+      ],
+      "choices": [
+        { "id": "k8a", "condition": "reactance>=0.8", "text": "Okay, Mama. After Diwali.", "type": "boundary", "truthful": true, "preserves_refusal": true, "next": "end_loss" },
+        { "id": "k8b", "condition": "reactance<0.8", "text": "Thank you, Mama.", "type": "empathy", "truthful": true, "preserves_refusal": true, "next": "end_partial" }
+      ]
+    },
+    "k9": {
+      "speaker": "hemant_joshi",
+      "line": "[Pause. He takes the pen.] Fine. Fine. Where. [He signs fast.] Go now, it's late. Your Aai will worry.",
+      "tells": [
+        { "id": "t_fine_fine", "anchor": "phrase:Fine. Fine. Where.", "indexes": "compliance_not_agreement", "tactic": null, "window": 2, "insight_cost": 1, "reading": "Compliance. He wants you gone.", "false_positive": "It's late. He's tired." }
+      ],
+      "choices": [
+        { "id": "k9a", "text": "Thanks, Mama.", "type": "empathy", "truthful": true, "preserves_refusal": true, "next": "end_dark" }
+      ]
+    },
+    "end_clean": { "end": "clean", "token_hint": "agreement", "architect": "He was at the branch before you on Saturday. Room closed." },
+    "end_clean_hasty": { "end": "clean", "token_hint": "agreement", "deltas": { "trust": -3 }, "architect": "He signed by the onions. Room closed." },
+    "end_partial": { "end": "partial", "token_hint": "compliance", "architect": "Signature. No statements. Room closed." },
+    "end_dark": { "end": "dark", "token_hint": "compliance", "architect": "You got a yes. You did not get an agreement. He will remember the difference before you do." },
+    "end_loss": { "end": "loss", "architect": "After Diwali. Room closed." }
+  },
+  "debrief": {
+    "tells": ["t_tumbler", "t_after_week", "t_shop_deflect", "t_trail_off", "t_hemu", "t_calendar"],
+    "hidden_objection": "overdraft",
+    "afterword": {
+      "speaker": "hemant_joshi",
+      "to": "Shobha (your mother), on the phone",
+      "clean": "The child is sensible, Shobha. Came with me to the bank. Like a grown-up.",
+      "partial": "I signed. What more do they want from me.",
+      "dark": "Your child talks like a lawyer now.",
+      "loss": "They were in a hurry. Everyone is in a hurry."
+    }
+  }
+}

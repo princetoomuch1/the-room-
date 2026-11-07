@@ -1,0 +1,20 @@
+{
+  "id": "meera_rao",
+  "name": "Meera Rao",
+  "archetype": "chess_player",
+  "contacts": [
+    "dev_malhotra",
+    "daniel_fernandes"
+  ],
+  "traits": {
+    "D": 70,
+    "mach": 80,
+    "comprehension": 85,
+    "IQ": 85,
+    "planning_horizon": 85,
+    "trust": 35,
+    "A": 40,
+    "liberty": 60
+  },
+  "soul_sheet": "docs/02_soul_sheets.md"
+}

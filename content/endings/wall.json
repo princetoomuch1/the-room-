@@ -1,0 +1,10 @@
+{
+  "id": "wall",
+  "title": "The Wall",
+  "selection": {
+    "priority": 3,
+    "rule": "'wall' in ending_flags"
+  },
+  "prose_ref": "docs/06_endings.md#the-wall",
+  "conditional_lines": []
+}

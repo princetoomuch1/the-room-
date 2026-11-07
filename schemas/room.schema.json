@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "room.schema.json",
+  "title": "Room (medium base)",
+  "type": "object",
+  "required": [
+    "id",
+    "mode",
+    "title",
+    "npcs",
+    "start",
+    "nodes",
+    "debrief"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "mode": {
+      "const": "medium"
+    },
+    "title": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "architect_intro": {
+      "type": "string"
+    },
+    "npcs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "player_goal": {
+      "type": "string"
+    },
+    "stated_objection": {},
+    "stated_objections": {
+      "type": "object"
+    },
+    "hidden_objection_layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "text",
+          "reveal"
+        ]
+      }
+    },
+    "objects": {
+      "type": "array"
+    },
+    "content_note": {
+      "type": "object",
+      "required": [
+        "required",
+        "text"
+      ]
+    },
+    "crisis_resources_visible": {
+      "type": "boolean"
+    },
+    "turn_limit": {
+      "type": "integer"
+    },
+    "clock": {
+      "type": "object"
+    },
+    "evidence_cards": {
+      "type": "object"
+    },
+    "winning_hand": {
+      "type": "object"
+    },
+    "partial_hand": {
+      "type": "object"
+    },
+    "start": {
+      "type": "string"
+    },
+    "nodes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "speaker": {
+            "type": "string"
+          },
+          "line": {
+            "type": "string"
+          },
+          "line_by_state": {
+            "type": "array"
+          },
+          "tells": {
+            "type": "array",
+            "items": {
+              "$ref": "tell.schema.json"
+            }
+          },
+          "choices": {
+            "type": "array"
+          },
+          "end": {
+            "enum": [
+              "clean",
+              "partial",
+              "dark",
+              "loss"
+            ]
+          },
+          "architect": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "debrief": {
+      "type": "object",
+      "required": [
+        "tells",
+        "afterword"
+      ]
+    }
+  }
+}

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>The Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Cormorant+Unicase:wght@400;600&family=Caveat:wght@500&family=Special+Elite&family=Permanent+Marker&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#e7e2d6;--dim:#8d8678;--paper:#0b0a09;--line:#2a2721;--gold:#c9a24a;--red:#8c2f24;--green:#9fb27a}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;color:var(--ink);
+ font-family:Fraunces,Spectral,"Iowan Old Style",Georgia,serif;font-optical-sizing:auto}
+h1,h2,.speaker,.plate,.endtitle,.sub{font-family:"Cormorant Unicase","Cormorant Garamond",Georgia,serif}
+.hand,.ret,.unmeasured{font-family:Caveat,"Bradley Hand",cursive}
+.tw{font-family:"Special Elite","Courier Prime",monospace}
+#app{max-width:980px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.stage{position:relative;aspect-ratio:16/9;overflow:hidden;border-bottom:1px solid var(--line);background:#000}
+.stage .vfx{position:absolute;inset:0}
+#bulbwrap{animation:flick 20s infinite}
+@keyframes flick{0%,97%{opacity:1}97.4%{opacity:.35}97.8%{opacity:1}98.2%{opacity:.5}98.6%{opacity:1}}
+#rainwrap{animation:rainmv 2.4s linear infinite}
+@keyframes rainmv{from{transform:translateY(-6px)}to{transform:translateY(6px)}}
+#smokewrap{animation:smoke 3.2s ease-in-out infinite}
+.bg #flick{animation:flick2 7s infinite}
+@keyframes flick2{0%,92%{opacity:.5}93%{opacity:.08}94%{opacity:.5}95%{opacity:.2}96%{opacity:.5}}
+.bg #sec{animation:tick 60s steps(60) infinite;transform-origin:662px 134px}
+@keyframes tick{to{transform:rotate(360deg)}}
+.bg #bulb,.bg #lamp,.bg #lamp2,.bg #lamp3{animation:flick 20s infinite}
+.bg #rain{animation:rainmv 2.4s linear infinite}
+.bg #smoke{animation:smoke 3.2s ease-in-out infinite}
+@keyframes smoke{0%{opacity:.18;transform:translateY(0) scaleX(1)}50%{opacity:.4;transform:translateY(-8px) scaleX(1.1)}100%{opacity:.18;transform:translateY(0) scaleX(1)}}
+.portrait{position:absolute;right:5%;bottom:0;width:30%;max-width:220px;filter:drop-shadow(0 0 30px rgba(0,0,0,.8))}
+.face{width:100%;display:block}
+.hands{position:absolute;left:0;right:0;bottom:-2px;width:64%;margin:0 auto;opacity:.9}
+.clockbox{position:absolute;left:14px;top:12px;font:11px/1.2 ui-monospace,monospace;color:#cfc6ad;letter-spacing:.1em;background:rgba(0,0,0,.45);padding:5px 8px;border:1px solid #302c24}
+.place{position:absolute;right:14px;top:12px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#b9ad93;background:rgba(0,0,0,.45);padding:5px 8px;border:1px solid #302c24}
+.panel{padding:18px 20px 26px;flex:1;display:flex;flex-direction:column;gap:14px;background:linear-gradient(#0b0a09,#070707)}
+.meta{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.meta b{color:var(--ink);font-weight:600}
+.bar{height:3px;width:70px;background:#201d18;display:inline-block;vertical-align:middle;margin-left:6px}
+.bar i{display:block;height:100%;background:var(--gold)}
+.speaker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.line{font-size:19px;line-height:1.6;min-height:4.2em;white-space:pre-wrap}
+.line .st{color:var(--dim);font-style:italic}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button{font-family:Fraunces,Spectral,Georgia,serif;color:var(--ink);background:#13110e;border:1px solid var(--line);padding:9px 12px;cursor:pointer;font-size:14px;text-align:left;line-height:1.4;transition:background .15s,border-color .15s}
+button:hover:not(:disabled){background:#1d1a15;border-color:#4a4337}
+button:disabled{opacity:.35;cursor:default}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){#bulbwrap,#rainwrap,#smokewrap,.bg #bulb,.bg #rain,.bg #smoke,.bg #flick,.bg #sec,.bg #lamp,.bg #lamp2,.bg #lamp3{animation:none!important}.vig{animation:none}}
+.choices button{display:block;width:100%}
+.choices{display:flex;flex-direction:column;gap:7px}
+.tag{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-right:8px}
+.skull{color:var(--red)}
+.callb{border-color:#5a4a1e;background:#171308}
+.chip{font-size:12px;padding:5px 9px;border:1px dashed #3a342a;background:#100e0b}
+.chip.done{border-style:solid;opacity:.45}
+.read{font-size:14px;color:#cfc6ad;border-left:2px solid var(--gold);padding:6px 10px;background:#100e0b}
+.fp{color:var(--dim);font-size:13px;font-style:italic}
+.hint{font-size:12px;color:var(--dim)}
+.overlay{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:22px;padding:30px;z-index:50;text-align:center}
+.vig{width:260px;height:150px;border:1px solid #241f19;display:flex;align-items:center;justify-content:center;padding:14px;font-size:15px;color:#d8cfb8;background:#0a0908;animation:fade 3s ease}
+@keyframes fade{0%{opacity:0}18%{opacity:1}82%{opacity:1}100%{opacity:0}}
+h1{font-size:34px;letter-spacing:.3em;margin:0;font-weight:400;text-transform:uppercase}
+h2{font-size:20px;letter-spacing:.2em;text-transform:uppercase;font-weight:400;margin:0;color:var(--gold)}
+.sub{color:var(--dim);letter-spacing:.2em;font-size:12px;text-transform:uppercase}
+.scores{display:flex;gap:28px;justify-content:center}
+.scores div{text-align:center}
+.scores b{display:block;font-size:30px;color:var(--gold);font-weight:400}
+.scores span{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.narrow{max-width:620px;line-height:1.7;font-size:16px}
+/* WP-17.2 the paper */
+.sheetwrap{position:relative;margin:0 auto;width:78%;max-width:760px;transform:perspective(900px) rotateX(1.5deg);
+ filter:drop-shadow(0 8px 32px rgba(0,0,0,.55)) drop-shadow(0 2px 4px rgba(0,0,0,.35));transition:filter 2s}
+.sheetwrap.idle{filter:drop-shadow(0 10px 38px rgba(0,0,0,.62)) drop-shadow(0 2px 5px rgba(0,0,0,.4))}
+.sheetwrap.enter{animation:rise .32s cubic-bezier(.22,.61,.36,1)}
+@keyframes rise{from{transform:perspective(900px) rotateX(1.5deg) translateY(12px);opacity:0}to{transform:perspective(900px) rotateX(1.5deg) translateY(0);opacity:1}}
+.sheetwrap.burn{animation:burn .6s ease-in forwards}
+@keyframes burn{0%{filter:none}60%{filter:brightness(.4) contrast(1.6)}100%{filter:brightness(0);opacity:0}}
+.paper{position:absolute;inset:0;width:100%;height:100%}
+.sheetinner{position:relative;padding:26px 34px 30px;color:#141210}
+.plate{position:relative;display:inline-block;margin:0 0 4px 2px;padding:5px 12px;font-size:15px;letter-spacing:.06em;
+ background:#ded5c2;color:#141210;clip-path:polygon(0 8%,4% 0,97% 6%,100% 0,100% 94%,96% 100%,3% 95%,0 100%);animation:plate .22s cubic-bezier(.22,.61,.36,1)}
+@keyframes plate{from{transform:translateX(-8px);opacity:0}to{transform:none;opacity:1}}
+.pline{font-size:var(--fs,20px);line-height:var(--lh,1.5);color:#141210;white-space:pre-wrap;font-family:var(--body)}
+.pline .c{display:inline-block;opacity:0;transform:translateY(.6px);filter:blur(.6px);animation:settle .12s cubic-bezier(.22,.61,.36,1) forwards}
+.pline.done .c{animation-duration:.1s}
+@keyframes settle{0%{opacity:0;transform:translateY(-.3px);filter:blur(.6px)}100%{opacity:1;transform:none;filter:none}}
+.pline .c.last{animation:settlelast .42s ease-out forwards}
+@keyframes settlelast{0%{opacity:0;filter:blur(.6px)}30%{opacity:1;transform:translateY(.3px);filter:none}100%{opacity:1;transform:none}}
+.pline.done{animation:breathe 4s ease-in-out 1s infinite}
+@keyframes breathe{0%,80%,100%{opacity:1}90%{opacity:.97}}
+.pline.done:hover .c.last{border-bottom:1px solid #b8924a}
+.fx-italic{font-style:italic}.fx-weight{font-weight:500}
+.fx-color{animation:inkshift .6s forwards}@keyframes inkshift{to{color:#8c2f24}}
+.fx-shake{animation:shake .3s}@keyframes shake{20%{transform:translate(2px,-1px)}40%{transform:translate(-2px,1px)}60%{transform:translate(1px,2px)}}
+.fx-wobble{animation:wobble .9s ease-in-out}@keyframes wobble{25%{transform:translateY(-1.5px)}75%{transform:translateY(1.5px)}}
+.fx-blur{animation:blurin .5s ease-out}@keyframes blurin{from{filter:blur(2px);opacity:.4}to{filter:none;opacity:1}}
+.mirrorhand{font-family:var(--hand)!important}
+.heard{font-style:italic;font-size:13px;color:#5e5648;margin-top:6px}
+.stage.memory .bg{filter:saturate(.6) brightness(.85)}
+.trio{position:absolute;bottom:0;display:flex;gap:2%;right:3%;width:52%}
+.trio .portrait{position:relative;right:auto;width:33%}
+.portrait{animation:breathP var(--br,4.3s) ease-in-out infinite}
+@keyframes breathP{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.008) translateY(-.5px)}}
+.cardpage{display:flex;flex-direction:column;gap:6px}
+.chev{align-self:flex-start;margin-left:14px;background:none;border:0;color:#b8924a;font-size:20px;cursor:pointer}
+.peek{height:10px;margin:0 0 0 0;background:#e8e0cf;opacity:.5;clip-path:polygon(0 0,100% 30%,96% 100%,2% 70%)}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.scenetitle{font-family:"Cormorant Unicase",serif;font-size:42px;color:#e8e0cf;-webkit-text-stroke:1px #000;animation:scin .8s ease-out both}
+@keyframes scin{from{opacity:0;filter:blur(6px);transform:translateY(4px)}to{opacity:1;filter:none;transform:none}}
+.scenerule{height:1px;background:#b8924a;width:0;margin-top:10px;animation:rule .4s ease-out .06s forwards}
+@keyframes rule{to{width:280px}}
+.scene.out .scenetitle{animation:scout .4s ease-in forwards}@keyframes scout{to{opacity:0;filter:blur(6px);transform:translateY(-4px)}}
+.hold{opacity:0;pointer-events:none}
+.setrow{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:center;width:min(560px,90vw);margin:0 auto 8px;font-size:14px}
+.setrow .opts{display:flex;gap:6px;flex-wrap:wrap}
+.setrow button.on{border-color:#b8924a;color:#f0d79a}
+body.hc .paper .sheet{fill:#f5f0e6}body.hc .paper .flourish,body.hc .scenerule{display:none}
+body.hc .sheetwrap,body.hc .pcard{filter:none}body.hc .pline{color:#000}body.hc .stage .bg{filter:brightness(.8)}
+body.hc .sheetwrap{outline:1px solid #000;background:#f5f0e6}
+body.rm .pline .c{animation:none!important;opacity:1;transform:none;filter:none}
+body.rm .pline.done,body.rm .fx-shake,body.rm .fx-wobble,body.rm .fx-blur,body.rm .portrait,body.rm .scenetitle,body.rm .scenerule,body.rm .sheetwrap{animation:none!important}
+body.rm .scenerule{width:280px}
+.pline .st{color:#5e5648;font-style:italic}
+/* WP-17.6 cards */
+.cardstack{width:78%;max-width:760px;margin:14px auto 0;display:flex;flex-direction:column;gap:6px}
+.pcard{position:relative;border:0;background:none;padding:15px 20px 15px 54px;text-align:left;font-size:17px;line-height:1.4;color:#141210;
+ cursor:pointer;filter:drop-shadow(0 6px 18px rgba(0,0,0,.5));transition:transform .14s ease-out,filter .14s}
+.pcard:hover{transform:translate(2px,-2px);filter:drop-shadow(0 10px 24px rgba(0,0,0,.6))}
+.cardpaper{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+.pcard .num{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:26px;height:24px}
+.pcard:hover .num path{stroke-width:2.9}
+.pcard .skullmark{position:absolute;right:14px;top:10px;width:18px;height:18px}
+.pcard.sk{color:#241f19}
+.pcard.sk:hover .ctext{border-bottom:1px solid #8c2f24}
+.pcard .cflour{position:absolute;right:12px;bottom:8px;width:18px;height:18px;opacity:0;transition:opacity .18s}
+.pcard:hover .cflour{opacity:.8}
+/* WP-16 typewriter */
+.twpaper{position:relative;width:85%;max-width:860px;height:75vh;margin:0 auto;background:#e8e0cf;transform:rotate(-.8deg);
+ box-shadow:0 18px 60px rgba(0,0,0,.7);clip-path:polygon(0 0,100% 0,100% 97%,92% 100%,74% 97%,48% 100%,22% 97%,0 100%)}
+.twpaper.pull{animation:pullback 2s ease-in-out forwards}
+@keyframes pullback{to{transform:rotate(-.8deg) scale(.94)}}
+.twgrain{position:absolute;inset:0;opacity:.05;background-image:repeating-linear-gradient(0deg,#000 0 1px,transparent 1px 3px)}
+.twring{position:absolute;left:6%;top:8%;width:140px;height:140px;border:14px solid #6b4a2c;border-radius:50%;opacity:.03}
+.twmark{position:absolute;right:5%;bottom:6%;font-family:"Cormorant Unicase",serif;font-size:22px;opacity:.03;transform:rotate(180deg);color:#141210}
+.tw{position:relative;padding:8% 9%;color:#141210;font-size:19px;line-height:1.85;white-space:pre-wrap}
+.tw .cur{display:inline-block;width:.55em;height:1.05em;background:#141210;vertical-align:-.18em}
+.tw .cur.bl{animation:blink 1.06s steps(1,end) infinite}
+@keyframes blink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+/* WP-15 / 17 score screen */
+.endtitle{font-size:44px;letter-spacing:.22em;color:#c9a24a;animation:tfade 2.5s ease-out}
+.endtitle.bone{color:#e8e0cf}.endtitle.oxide{color:#8c2f24}.endtitle.dim{color:#c9a24a;opacity:.6}
+.endtitle.bright_gold{color:#f0c75e}.endtitle.bone_on_bone{color:#0c0b0a;text-shadow:0 1px 0 #2a2721}
+@keyframes tfade{from{opacity:0;filter:blur(6px)}to{opacity:1;filter:blur(0)}}
+.scorerow{display:grid;grid-template-columns:120px 1fr 56px;align-items:center;gap:14px;width:min(560px,86vw);margin:0 auto 12px}
+.scorelab{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);text-align:right}
+.scoretrack{height:10px;background:#1a1713;overflow:hidden}
+.scorefill{height:100%;width:0}
+.scorefill.ins{background:#3f4a7a}.scorefill.cra{background:#7a4526}.scorefill.edg{background:#8c2f24}.scorefill.mys{background:#c9a24a}
+.scorenum{font-size:18px;color:var(--ink)}
+.unmeasured{font-size:19px;color:#c9a24a;opacity:.85}
+.ret{font-size:22px;color:#e8e0cf;background:none;border:0;cursor:pointer}
+.cine{position:absolute;inset:0;width:100%;height:100%}
+.cine .note{animation:drift 2.4s ease-out both;animation-delay:var(--d);transform:translate(var(--dx),var(--dy))}
+@keyframes drift{from{opacity:0;transform:translate(calc(var(--dx) - 90px),calc(var(--dy) - 70px)) rotate(-24deg)}to{opacity:1}}
+.cine .col{animation:stack 1.4s ease-out both;animation-delay:var(--cd);transform-origin:bottom}
+@keyframes stack{from{opacity:0;transform:scaleY(0)}to{opacity:1;transform:scaleY(1)}}
+.cine .scr{animation:scr 1s ease-out both;animation-delay:var(--sd)}
+@keyframes scr{from{opacity:0}to{opacity:1}}
+.cine .fig{animation:fig 2s ease-out 9s both}
+@keyframes fig{from{opacity:0}to{opacity:1}}
+.cine .pen{animation:pen 1.2s ease-out 12s both}
+@keyframes pen{from{opacity:0;transform:translateX(-6px)}to{opacity:1}}
+.cine .lamp8{animation:flick 20s infinite}
+.cine .pg{opacity:0;animation:pg .5s steps(1,end) both;animation-delay:var(--pd)}
+@keyframes pg{to{opacity:1}}
+.cine .hand8{animation:hand 1.4s ease-out both}
+@keyframes hand{from{opacity:0;transform:translateX(40px)}to{opacity:1}}
+.cine .cont{animation:cont 6s ease-in-out both}
+@keyframes cont{from{transform:translateY(-90px)}to{transform:translateY(0)}}
+.cine .wave{animation:wv 2.6s ease-in-out infinite alternate;animation-delay:var(--wd)}
+@keyframes wv{to{transform:translateX(8px)}}
+.cine .cig{animation:cig 3s ease-in-out infinite alternate}
+@keyframes cig{to{opacity:.3}}
+.cine .photo8{animation:fade8 4s ease-out 4s both}
+@keyframes fade8{to{opacity:.05}}
+.cine .stranger8,.cine .stranger9{animation:walkin 2.6s ease-out 4s both}
+@keyframes walkin{from{opacity:0;transform:translateX(70px)}to{opacity:1}}
+.cine .rec8{animation:rec 1.2s steps(1,end) infinite}
+@keyframes rec{0%,50%{opacity:1}50.01%,100%{opacity:.15}}
+.cine .rain8{animation:rainmv 2.4s linear infinite;animation-delay:var(--rd)}
+.cine .anna8{animation:fig 1.6s ease-out 5s both}
+.cine .gavel8{animation:gav .3s ease-in 8s both}
+@keyframes gav{50%{transform:translateY(-10px)}}
+.cine .doorline{animation:doorclose 2s ease-in 5s both}
+@keyframes doorclose{to{transform:scaleX(0)}}
+.cine .door8{animation:dclose 2.4s ease-in-out both;transform-origin:left}
+@keyframes dclose{from{transform:perspective(600px) rotateY(-42deg)}to{transform:none}}
+.cine .sec8{animation:tick 60s steps(60) infinite;transform-origin:634px 134px}
+.cine .hand9{animation:hand9 1.8s ease-out 5s both}
+@keyframes hand9{from{opacity:0;transform:translateY(-30px)}to{opacity:1}}
+.cine .doc8{animation:fig 1.2s ease-out both}
+.cine .sig8{stroke-dasharray:240;stroke-dashoffset:240;animation:write 1.8s ease-out 1.6s both}
+@keyframes write{to{stroke-dashoffset:0}}
+.cine .hand10{animation:hand 1.2s ease-out both}
+@media(prefers-reduced-motion:reduce){.cine *{animation:none!important}.sheetwrap.enter,.sheetwrap.burn,.plate,.endtitle,.twpaper.pull{animation:none!important}}
+.note{border:1px solid #3a2a22;background:#120c0a;padding:12px;font-size:14px;color:#d6c4b4}
+@media(max-width:600px){.line{font-size:17px}.portrait{width:36%}}
+</style></head>
+<body><div id="app"></div>
+<script src="content1.js"></script><script src="content2.js"></script>
+<script src="faces.js"></script><script src="art.js"></script><script src="content4.js"></script><script src="engine.js"></script>
+<script src="content3.js"></script><script src="rigs.js"></script><script src="paper.js"></script><script src="cinematics.js"></script><script src="text.js"></script>
+<script>
+const app=document.getElementById('app'); const G=window.GAME; const F=window.FACES; const A=window.ART;
+let blink=false, gaze=0, tickT=null;
+function save(){try{localStorage.setItem('theroom',JSON.stringify({i:G.S.i,insight:G.S.insight,craft:G.S.craft,edge:G.S.edge,carry:G.S.carry}))}catch(e){}}
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function fmtLine(s){return esc(s).replace(/\[([^\]]+)\]/g,'<span class="st">[$1]</span>')}
+const CRISIS=[["Emergency","112","all"],["Zelfmoordlijn","1813","Dutch"],["Centre de Pr\u00e9vention du Suicide","0800 32 123","French"],["Community Help Service","02 648 40 14","English"]];
+function crisisBlock(){
+ return `<div class="note" role="region" aria-label="Support lines">If any of this is close to home, these lines are free, anonymous and open all hours in Belgium.<br>`
+  + CRISIS.map(c=>`<b>${c[0]}</b> ${c[1]} <span class="hint">(${c[2]})</span>`).join(' \u00b7 ') + `</div>`;
+}
+function clockStr(){ if(G.S.clockSet) return new Date().toTimeString().slice(0,5)+' · stopped'; const d=new Date(Date.now()-4*60000);return d.toTimeString().slice(0,5)+' · four minutes slow'}
+
+function title(){
+ clearInterval(tickT); TEXT.apply();
+ const hand=TEXT.get('hand');
+ const hb=(k,l)=>`<button class="${hand===k?'on':''}" onclick="TEXT.set('hand','${k}');title()" aria-pressed="${hand===k}">${l}</button>`;
+ app.innerHTML=`<div class="overlay">
+  <div class="sub">Chapter I</div><h1>The Room</h1><div class="sub">The Last Ledger</div>
+  <div class="narrow">Antwerp, November. Eleven days ago Daniel Voss walked out of a locked office. You are Hale. You have no face in this story, only your hands and one winter in 2001.</div>
+  <div class="setrow"><span>Your hand</span><div class="opts">${hb('pen','Fountain pen')}${hb('typewriter','Typewriter')}${hb('pencil','Pencil')}${hb('marker','Marker')}</div></div>
+  <div class="hint" style="max-width:520px">Whatever you choose is the hand that speaks back to you at the end.</div>
+  <div class="row" style="justify-content:center">
+   <button onclick="start(0)">Begin · sixty to ninety minutes</button>
+   <button onclick="start(1)">Hard · less attention, shorter windows</button>
+  </div>
+  <div class="row" style="justify-content:center">
+   <button onclick="settings()" aria-label="Text and accessibility settings">Settings</button>
+   <button onclick="codex()" aria-label="Open the codex and support lines">Codex and support lines</button>
+  </div></div>`;
+}
+function settings(back){
+ const v=TEXT.SET();
+ const row=(label,key,opts)=>`<div class="setrow"><span>${label}</span><div class="opts">${opts.map(([val,txt])=>
+  `<button class="${String(v[key])===String(val)?'on':''}" aria-pressed="${String(v[key])===String(val)}" onclick="TEXT.set('${key}',${typeof val==='string'?`'${val}'`:val});settings(${back?'1':''})">${txt}</button>`).join('')}</div></div>`;
+ app.innerHTML=`<div class="overlay"><h2>Settings</h2>
+  ${row('Text size','size',[['S','Small'],['M','Medium'],['L','Large']])}
+  ${row('Typeface','font',[['fraunces','Fraunces'],['atkinson','Atkinson Hyperlegible']])}
+  ${row('Line spacing','spacing',[['tight','Tight'],['comfortable','Comfortable'],['loose','Loose']])}
+  ${row('High contrast','contrast',[[false,'Off'],[true,'On']])}
+  ${row('Reduced motion','reduced',[['auto','Follow system'],['on','On'],['off','Off']])}
+  ${row('Instant text','instant',[[false,'Off'],[true,'On']])}
+  ${row('Text sound','sound',[[false,'Off'],[true,'On']])}
+  <div class="pline" style="color:#e7e2d6;max-width:560px">I have the minute. I do not have the man.</div>
+  <button onclick="${back?'draw()':'title()'}">Back</button></div>`;
+}
+function start(hard){ G.newRun(hard); before(0); }
+function before(i){
+ const s=window.BEFORE[i];
+ if(!s) return prologue();
+ app.innerHTML=`<div class="overlay" style="padding:0">
+  <div class="twpaper" style="height:auto;min-height:44vh"><div class="twgrain"></div>
+   <div class="tw" style="padding:7% 9%"><div class="sub" style="color:#5e5648;margin-bottom:10px">${esc(s.date)}</div><div id="bt" aria-live="polite"></div></div></div>
+  <div class="row" style="position:fixed;bottom:16px"><button onclick="before(${i+1})">Continue</button><button onclick="prologue()">Skip to the car</button></div></div>`;
+ const el=document.getElementById('bt');
+ if(TEXT.get('instant')||TEXT.reducedMotion()){ el.textContent=s.text; return; }
+ let k=0; (function step(){ if(k>s.text.length) return; el.innerHTML=esc(s.text.slice(0,k))+'<span class="cur"></span>'; const ch=s.text[k-1]; k++;
+  setTimeout(step, 30+(ch==='.'?320:ch===','?160:0)); })();
+}
+function prologue(){ playInter(window.PROLOGUE, ()=>openRoom()); }
+let interDone=null;
+function playInter(def, done){
+ interDone=done; G.interStart(def); interDraw(def);
+}
+function interDraw(def){
+ const n=G.interNode();
+ if(!n) return interDone&&interDone();
+ if(n.end==='hidden') return hiddenEnding(n.arch);
+ if(n.end) return interDone&&interDone();
+ const ch=n.ch||[];
+ const showFace = n.sp && n.sp!=='voss';
+ app.innerHTML=`<div class="stage ${n.memory?'memory':''}" role="img" aria-label="${esc(def.title)}, ${esc(def.place)}">${A.bg(def.art)}
+   <div class="place">${esc(def.title)} · ${esc(def.place)}</div>
+   ${showFace?`<div class="portrait">${F.render(n.sp,n.em||'flat',{})}</div>`:''}
+   ${F.hands()}</div>
+  <div class="panel"><div class="sheetwrap enter" id="sheet">${PAPER.panel(def.id+'-'+G.INTER.node,760,170,{})}
+   <div class="sheetinner">${n.name?`<div class="plate">${esc(n.name)}</div>`:'<div class="plate" aria-hidden="true">&nbsp;</div>'}
+   <div class="pline" id="pl"></div></div></div>
+   <div class="cardstack hold" id="cs">${ch.map((c,i)=>`<button class="pcard" aria-label="Choice ${i+1}: ${esc(c.text.replace(/\[|\]/g,''))}" onclick="interSay('${c.id}')">${PAPER.card(c.id,false)}${PAPER.numeral(i+1)}<span class="ctext">${fmtLine(c.text)}</span></button>`).join('')}</div></div>`;
+ TEXT.reveal(document.getElementById('pl'), n.line, {fx:n.fx, voice:n.sp||'_'}).then(()=>{const cs=document.getElementById('cs'); if(cs) cs.classList.remove('hold');});
+}
+function interSay(id){ const def=G.INTER.cur; G.interChoose(id); interDraw(def); }
+function hiddenEnding(text){
+ app.innerHTML=`<div class="overlay"><div class="pline" style="color:#e8e0cf;font-size:24px">${esc(text)}</div>
+  <button class="ret" onclick="title()" aria-label="Return to menu">Return.</button></div>`;
+}
+function codex(){
+ app.innerHTML=`<div class="overlay"><h2>Codex</h2>
+  <div class="narrow"><b>Moves.</b> A move is clean when it is true and leaves the other person free to refuse. Anything else is a dirty move, and the game marks it.<br><br>
+  <b>CALL.</b> Click a live tell, then name the tactic. Twenty calls need the tell first. Six do not, and those six can be wrong.<br><br>
+  <b>Insight</b> counts what you read. <b>Craft</b> counts clean moves that landed. <b>Edge</b> counts dirty moves that worked and were not caught.<br><br>
+  <b>Tokens.</b> An agreement holds. Compliance is a yes under pressure and it comes with the odds of it collapsing.<br><br>
+  <b>The clock.</b> Every clock in this city runs four minutes slow. Nobody in the game will explain it.</div>
+  ${crisisBlock()}
+  <button onclick="title()">Back</button></div>`;
+}
+function openRoom(){
+ const r=G.room(); G.reset(r); roomHistory=[];
+ if(r.note){
+  app.innerHTML=`<div class="overlay"><h2>${esc(r.title)}</h2>
+   <div class="note narrow">${esc(r.note)}</div>
+   <div class="narrow">${crisisBlock()}</div>
+   <div class="row" style="justify-content:center">
+    <button onclick="intro()">Continue into the room</button>
+    <button onclick="skipRoom()">Skip this room</button></div></div>`;
+ } else intro();
+}
+function skipRoom(){
+ G.S.results[G.room().id]='skipped';
+ app.innerHTML=`<div class="overlay"><div class="sub">Room skipped</div>
+  <div class="narrow">That room is closed. What it held is summarised in the next debrief, and nothing in it was required to finish the game.</div>
+  ${crisisBlock()}<button onclick="advance()">Continue</button></div>`;
+}
+function intro(){
+ const r=G.room(), mirror=r.id==='mirror';
+ app.innerHTML=`<div class="stage" role="img" aria-label="${esc(r.title)}">${A.bg(r.id)}
+   <div class="scene" id="sc"><div class="scenetitle">${esc(r.title)}</div>${mirror?'':'<div class="scenerule"></div>'}</div></div>
+  <div class="panel" id="ip" style="opacity:0;transition:opacity .4s">
+   <div class="sub">Room ${r.n} of 8 · ${esc(r.place)}</div>
+   <div class="narrow">${esc(r.intro)}</div>
+   <div class="narrow" style="color:#b7ab92"><b>What you want:</b> ${esc(r.goal)}</div>
+   <button onclick="draw()">Go in</button></div>`;
+ if(!mirror) TEXT.chime();
+ const hold = TEXT.reducedMotion()?600:2800;
+ setTimeout(()=>{const s=document.getElementById('sc'); if(s) s.classList.add('out');}, hold);
+ setTimeout(()=>{const p=document.getElementById('ip'); if(p) p.style.opacity=1;}, hold+500);
+}
+let roomHistory=[], backView=null, cardPage=0, lastNodeKey=null, revealedOnce={};
+function speakerName(r,n){
+ const names={anna:'Anna Voss',joost:'Joost Beelen',mieke:'Mieke Carpentier',radu:'Radu Petrescu',board:'Hendrik Sluys',
+  gio:'Gioacchino Spada',marek:'Marek Zielinski',devries:'Pieter De Vries',emil:'Emil Hasanović',meera:'Meera Rao'};
+ return n.sp? (names[n.sp]||r.npc.name) : null;
+}
+function portraitFor(sp,em,extra){
+ const rig=(window.RIGS||{})[sp]; const br=rig&&rig.breath? (60/rig.breath).toFixed(2)+'s':'4.3s';
+ return `<div class="portrait" style="--br:${br}" ${extra||''}>${F.render(sp,em,{blink,gx:gaze})}</div>`;
+}
+function humanHold(r,id,n){
+ const rig=(window.RIGS||{})[n.sp];
+ if(rig&&rig.human&&rig.human.node===id) return {ms:rig.human.ms, alt:rig.human.alt};
+ if(n.soul||n.wound) return {ms:2400, alt:''};
+ return null;
+}
+function draw(){
+ const r=G.room(), id=G.S.node, n=r.nodes[id], S=G.S;
+ if(!n) return;
+ if(n.end) return endRoom();
+ const key=r.id+'/'+id; const fresh=key!==lastNodeKey; if(fresh){ cardPage=0; lastNodeKey=key; }
+ const em=n.em||'flat';
+ const tells=G.activeTells();
+ const mirror=r.id==='mirror';
+ const war=r.id==='warroom';
+ const name=speakerName(r,n);
+ const hold=fresh&&!revealedOnce[key]?humanHold(r,id,n):null;
+ const portraits = mirror||!n.sp ? '' : war
+   ? `<div class="trio">${['marek','devries','emil'].map(p=>portraitFor(p, p===n.sp?em:(p==='emil'?'quiet':'still'))).join('')}</div>`
+   : portraitFor(n.sp,em);
+ app.innerHTML=`
+ <div class="stage ${n.memory?'memory':''}" role="img" aria-label="${esc(r.title)}, ${esc(r.place)}">${A.bg(r.id)}
+  <div class="clockbox" id="clk">${clockStr()}</div>
+  <div class="place">${esc(r.title)} · ${esc(r.place)}</div>
+  ${portraits}
+  ${F.hands(n.handMove)}
+ </div>
+ <div class="panel">
+  <div class="meta">
+   <span>Attention <b>${S.points}</b></span>
+   <span>Trust<span class="bar"><i style="width:${S.trust}%"></i></span></span>
+   <span>Pressure<span class="bar"><i style="width:${S.fear}%;background:#8c2f24"></i></span></span>
+   <span>${S.hard?'Hard':'Medium'}</span>
+   <span>Insight <b>${S.insight}</b></span><span>Craft <b>${S.craft}</b></span><span>Edge <b>${S.edge}</b></span>
+   <span>Turn <b>${S.turn}</b>${r.turnLimit&&r.turnLimit<90?' / '+r.turnLimit:''}</span>
+   <button class="chip" onclick="settings(1)" aria-label="Settings">Settings</button>
+  </div>
+  <div class="sheetwrap ${fresh?'enter':''}" id="sheet">
+   ${PAPER.panel(r.id,760,220,{noFlourish:mirror})}
+   <div class="sheetinner">
+    ${mirror||!name?'<div class="plate" aria-hidden="true">&nbsp;</div>':`<div class="plate">${esc(name)}</div>`}
+    <div class="pline ${mirror?'mirrorhand':''}" id="pl" aria-live="polite"></div>
+    ${backView?`<div class="pline" style="opacity:.7">${fmtLine(backView)}</div><div class="heard">You heard this already.</div>`:''}
+    ${S.feedback?`<div class="pline" style="font-style:italic;color:#5e5648;font-size:16px" aria-live="polite">${esc(S.feedback)}</div>`:''}
+    ${hold&&hold.alt?`<div class="sr-only" aria-live="polite" style="position:absolute;left:-9999px">${esc(hold.alt)}</div>`:''}
+    <div id="readout"></div>
+   </div>
+  </div>
+  <div class="cardstack"><div class="tag">${tells.length?'live tells — click to read, costs attention':''}</div>
+   ${tells.length?`<div class="row">${tells.map(t=>`<button class="chip" aria-label="Read the tell: ${esc(t.anchor)}" onclick="rdTell('${t.id}')">${esc(t.anchor)}</button>`).join('')}</div>`:''}
+   <div class="tag" style="margin-top:8px">the room</div><div class="row">${r.objects.map(o=>`<button class="chip ${S.examined[o.id]?'done':''}" aria-label="Examine ${esc(o.label)}" onclick="rdObj('${o.id}')">${esc(o.label)}${o.cost?' · '+o.cost:''}</button>`).join('')}</div></div>
+  <div class="cardstack ${hold?'hold':''}" id="cs">${cards(G.available())}</div>
+  ${G.locked().length?`<div class="hint" style="width:78%;margin:6px auto 0">Closed to you right now: ${G.locked().join('; ')}.</div>`:''}
+ </div>`;
+ const pl=document.getElementById('pl');
+ let lineText=n.line;
+ if(n.echo){ const L=G.playerLines(); const pick=k=>L.length? L[(L.length-1-k*3+L.length*4)%L.length] : 'I am not going to write anything down.';
+  lineText=lineText.replace('{echo1}',pick(0)).replace('{echo2}',pick(1)); }
+ const firstMirror = mirror && id===r.start;
+ const fx = (n.fx||[]).concat(firstMirror?['reverse','slow-reveal']:[]).concat(mirror&&!firstMirror?['slow-reveal']:[]);
+ if(fresh && !revealedOnce[key]){
+  revealedOnce[key]=true;
+  TEXT.reveal(pl, lineText, {fx, speed:n.speed, voice: mirror?'mirror':n.sp});
+ } else { TEXT.reveal(pl, lineText, {fx:[]}); TEXT.skip(pl); pl.classList.add('done'); }
+ if(hold){ setTimeout(()=>{ const cs=document.getElementById('cs'); if(cs) cs.classList.remove('hold'); }, hold.ms); }
+}
+function cards(list){
+ const clean=list.filter(c=>!c.skull), dirty=list.filter(c=>c.skull);
+ const ordered=clean.concat(dirty);
+ const pages=[]; for(let i=0;i<ordered.length;i+=4) pages.push(ordered.slice(i,i+4));
+ if(pages.length>1 && dirty.length && !pages[pages.length-1].some(c=>c.skull)){ /* skull is always on the last page */ }
+ const p=Math.min(cardPage,pages.length-1);
+ const card=(c,i)=>`<button class="pcard ${c.skull?'sk':''}" aria-label="Choice ${i+1}${c.skull?', marked':''}: ${esc(c.text.replace(/\[[^\]]*\]/g,''))}" onclick="say('${c.id}')">
+   ${PAPER.card(c.id,!!c.skull)}${PAPER.numeral(i+1)}${c.skull?PAPER.skullMark():''}
+   <span class="ctext">${fmtLine(c.text)}</span>
+   <svg class="cflour" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 14 q6-12 14-10 q-6 2 -8 10z" fill="#b8924a"/></svg></button>`;
+ const base=p*4;
+ let html=`<div class="cardpage">${(pages[p]||[]).map((c,k)=>card(c,base+k)).join('')}</div>`;
+ if(pages.length>1){
+  if(p<pages.length-1) html+=`<div class="peek" aria-hidden="true"></div><button class="chev" aria-label="More choices" onclick="cardPage=${p+1};draw()">⌄</button>`;
+  else html=`<button class="chev" aria-label="Earlier choices" onclick="cardPage=${p-1};draw()">⌃</button>`+html;
+ }
+ return html;
+}
+document.addEventListener('keydown',ev=>{
+ if(!G.room()||!document.getElementById('pl')) return;
+ if(ev.key==='PageDown'){ cardPage++; draw(); }
+ if(ev.key==='PageUp'&&cardPage>0){ cardPage--; draw(); }
+ if(ev.key==='ArrowLeft'&&roomHistory.length){ backView=roomHistory[roomHistory.length-1]; draw(); setTimeout(()=>{backView=null;},50); }
+ if(ev.code==='Space'&&!window.__skipB){ const pl=document.getElementById('pl'); if(pl&&!pl.classList.contains('done')){ ev.preventDefault(); TEXT.skip(pl); } }
+});
+function rdTell(id){
+ const res=G.clickTell(id);
+ const el=document.getElementById('readout');
+ if(!res.ok){el.innerHTML=`<div class="read">${esc(res.msg)}</div>`;return;}
+ el.innerHTML=`<div class="read">${esc(res.reading)}${res.tactic?` <span class="tag">tactic: ${esc(res.tactic)}</span>`:''}${res.fp?`<div class="fp">Or: ${esc(res.fp)}</div>`:''}</div>`;
+ const keep=el.innerHTML; draw(); document.getElementById('readout').innerHTML=keep;
+}
+function rdObj(id){
+ const res=G.examine(id); const el=document.getElementById('readout');
+ if(!res.ok){el.innerHTML=`<div class="read">${esc(res.msg||'Nothing there.')}</div>`;return;}
+ const html=`<div class="read">${esc(res.text)}${res.wrong?'<div class="fp">It tells you nothing you can use tonight.</div>':''}</div>`;
+ draw(); document.getElementById('readout').innerHTML=html;
+}
+function say(id){ const n=G.room().nodes[G.S.node]; if(n&&n.line) roomHistory.push(n.line); gaze=(Math.random()*6-3)|0; G.choose(id); save(); draw(); }
+function endRoom(){
+ const out=G.finishRoom();
+ const queue=out.missed.slice();
+ let step=0;
+ function frame(){
+  if(step<queue.length){
+   const m=queue[step++];
+   app.innerHTML=`<div class="overlay"><div class="vig">${esc(m.anchor)}</div></div>`;
+   setTimeout(frame,3000);
+  } else scoreCard(out);
+ }
+ app.innerHTML=`<div class="overlay"><div class="narrow">${esc(out.arch)}</div><button onclick="(${queue.length?'window.__f()':'window.__s()'})">Continue</button></div>`;
+ window.__f=frame; window.__s=()=>scoreCard(out);
+}
+function scoreCard(out){
+ const S=G.S;
+ app.innerHTML=`<div class="overlay"><div class="sub">${esc(G.room().title)} · ${out.end}</div>
+  <div class="scores"><div><b>${S.insight}</b><span>insight</span></div><div><b>${S.craft}</b><span>craft</span></div><div><b>${S.edge}</b><span>edge</span></div></div>
+  <div aria-live="polite" class="narrow" style="color:#cfc6ad">${out.token==='agreement'?'You got an agreement.':`You got compliance. It holds for now; it will not hold. Back-out odds ${out.odds}%.`}</div>
+  ${out.hidden.length?`<div class="narrow"><div class="tag">what you did not reach</div>${out.hidden.map(h=>`<div class="read" style="margin:6px 0">${esc(h.text)}</div>`).join('')}</div>`:'<div class="hint">You reached everything under this room.</div>'}
+  <div class="hint">Not everything in that room was measured.</div>
+  ${G.room().note?`<div class="narrow">${crisisBlock()}</div>`:''}
+  <button onclick="advance()">${G.S.i>=G.ROOMS.length-1||G.S.signed?'End':'Next room'}</button></div>`;
+}
+function advance(){
+ const from=G.room(); const w=G.next(); save();
+ const cor=from&&window.CORRIDORS&&window.CORRIDORS[from.id];
+ const go=()=>{ if(w==='room') openRoom(); else ending(); };
+ if(cor && w==='room') playInter(cor, go);
+ else if(cor && w==='ending' && !G.S.signed) playInter(cor, go);
+ else go();
+}
+function ending(){
+ let e;
+ try{ e=G.ending(); }catch(err){ app.innerHTML=`<div class="overlay"><h2>Assertion</h2><div class="narrow">${esc(err.message)}</div><button onclick="title()">Menu</button></div>`; return; }
+ window.__end=e; const cine=CINE.get(e.id);
+ partA(e,cine);
+}
+const reduced = ()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function partA(e,cine){
+ app.innerHTML=`<div class="overlay" style="padding:0"><div class="stage" style="width:100%;max-width:900px" role="img" aria-label="${esc(cine.title)}: closing sequence">${CINE.anim(e.id)}</div></div>`;
+ const dur = reduced()? 1500 : cine.dur;
+ setTimeout(()=>{const b=document.querySelector('.blackout'); if(b){b.style.transition='opacity 2.5s';b.style.opacity='1';}}, Math.max(0,dur-2500));
+ setTimeout(()=>partB(e,cine), dur+1000);
+}
+let twTimer=null, twSkip=0;
+function partB(e,cine){
+ const text=cine.text;
+ app.innerHTML=`<div class="overlay" style="padding:0">
+  <div class="twpaper" id="twp"><div class="twgrain"></div><div class="twring"></div><div class="twmark">The Room</div>
+   <div class="tw" id="tw" aria-live="polite" aria-label="${esc(text)}"></div></div>
+  <div class="hint" style="position:fixed;bottom:14px">hold space to skip</div></div>`;
+ const el=document.getElementById('tw');
+ if(reduced()){ el.innerHTML=esc(text); return setTimeout(()=>partC(e,cine),2500); }
+ let i=0;
+ const pause=ch=>ch==='.'?400:ch===','?200:ch==='\u2014'?150:ch==='\n'?700:0;
+ function step(){
+  if(i>=text.length){ el.innerHTML=esc(text)+'<span class="cur bl"></span>';
+   return setTimeout(()=>partC(e,cine),2000); }
+  const ch=text[i++];
+  el.innerHTML=esc(text.slice(0,i))+'<span class="cur"></span>';
+  twTimer=setTimeout(step,38+pause(ch));
+ }
+ step();
+ window.__skipB=()=>{ clearTimeout(twTimer); G.S.ending_skipped=true; i=text.length; step(); };
+}
+function partC(e,cine){
+ const ink=cine.ink||'gold';
+ if(cine.bars==='none'){
+  app.innerHTML=`<div class="overlay"><div class="endtitle ${ink}">${esc(cine.title)}</div>
+   <button class="ret" onclick="title()" aria-label="Return to menu">Return.</button></div>`;
+  return;
+ }
+ app.innerHTML=`<div class="overlay"><div class="endtitle ${ink}">${esc(cine.title)}</div></div>`;
+ setTimeout(()=>scoreScreen(e,cine), reduced()?800:4000);
+}
+function scoreScreen(e,cine){
+ const cap=v=>Math.max(0,Math.min(100,Math.round(v)));
+ const ins=cap(e.perfect?100:e.insight*2.2), cra=cap(e.perfect?100:e.craft*2.6), edg=cap(e.perfect?100:e.edge*4);
+ const noEdge = cine.bars==='no_edge';
+ const statik = cine.bars==='static'||cine.bars==='static_low';
+ const rows=[['INSIGHT','ins',ins],['CRAFT','cra',cra]].concat(noEdge?[]:[['EDGE','edg',edg]]);
+ app.innerHTML=`<div class="overlay">
+  <div class="sub">${esc(cine.title)}</div>
+  <div>${rows.map(r=>`<div class="scorerow"><div class="scorelab">${r[0]}</div>
+   <div class="scoretrack"><i class="scorefill ${r[1]}" id="f_${r[1]}"></i></div><div class="scorenum" id="n_${r[1]}"></div></div>`).join('')}
+   ${e.mystery?`<div class="scorerow"><div class="scorelab">THE MYSTERY</div><div class="scoretrack"><i class="scorefill mys" id="f_mys"></i></div><div class="scorenum"></div></div>
+   <div style="text-align:center"><span class="unmeasured" id="unm" style="opacity:0">Unmeasured.</span></div>`:''}</div>
+  <div class="hint">${e.skulls} dirty moves \u00b7 ${e.walls} refusals held \u00b7 ${e.wrongCalls||0} wrong calls \u00b7 ${e.mins} minutes${G.S.ending_skipped?' \u00b7 skipped':''}</div>
+  <button class="ret" onclick="title()" aria-label="Return to menu">Return.</button></div>`;
+ let t=0;
+ rows.forEach(r=>{
+  const f=document.getElementById('f_'+r[1]), n=document.getElementById('n_'+r[1]);
+  setTimeout(()=>{ if(!f)return;
+   if(statik||reduced()){ f.style.width=r[2]+'%'; n.textContent=r[2]; }
+   else { f.style.transition='width 1.8s ease-out'; f.style.width=r[2]+'%'; setTimeout(()=>{if(n)n.textContent=r[2];},1800); }
+  }, statik?0:t);
+  t+=statik?0:1800;
+ });
+ if(e.mystery){
+  setTimeout(()=>{ const f=document.getElementById('f_mys'); if(!f)return;
+   f.style.transition='width 2.5s ease-out'; f.style.width='100%';
+   setTimeout(()=>{const u=document.getElementById('unm'); if(u){u.style.transition='opacity 1s';u.style.opacity='1';}},2500);
+  }, t);
+ }
+}
+document.addEventListener('keydown',ev=>{ if(ev.code==='Space'&&window.__skipB){ ev.preventDefault(); window.__skipB(); window.__skipB=null; } });
+setInterval(()=>{blink=true;const el=document.querySelector('.portrait');if(el){const n=G.room()&&G.room().nodes[G.S.node];if(n&&n.sp)el.innerHTML=F.render(n.sp,n.em||'flat',{blink:true,gx:gaze});}
+ setTimeout(()=>{blink=false;const e2=document.querySelector('.portrait');if(e2){const n=G.room()&&G.room().nodes[G.S.node];if(n&&n.sp)e2.innerHTML=F.render(n.sp,n.em||'flat',{blink:false,gx:gaze});}},130);},5200);
+let idleT=null;
+document.addEventListener('mousemove',()=>{const s=document.getElementById('sheet');if(s)s.classList.remove('idle');clearTimeout(idleT);idleT=setTimeout(()=>{const q=document.getElementById('sheet');if(q)q.classList.add('idle');},4000);});
+document.addEventListener('mousemove',ev=>{const s=document.getElementById('sheet');if(!s)return;const x=(ev.clientX/window.innerWidth-.5)*4,y=(ev.clientY/window.innerHeight-.5)*2;s.style.marginLeft=x.toFixed(1)+'px';s.style.marginTop=y.toFixed(1)+'px';});
+setInterval(()=>{const c=document.getElementById('clk');if(c)c.textContent=clockStr();},15000);
+title();
+</script></body></html>

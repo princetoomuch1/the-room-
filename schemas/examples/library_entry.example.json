@@ -1,0 +1,18 @@
+{
+  "id": "CRB-2-001",
+  "title": "Broken record",
+  "module": "CRB (boundaries)",
+  "level": "2",
+  "risk": "low",
+  "summary": "Calmly repeating the same short refusal without adding reasons.",
+  "detection": "n/a (defensive skill)",
+  "counter": "Used as the counter to escalating pressure; see Room 9.",
+  "rooms": [
+    "room9_mirror"
+  ],
+  "evidence_grade": "Weak",
+  "sources": [
+    "Dossier \u00a76.2"
+  ],
+  "note": "Illustrative shape only. Not an entry from Deliverable 1; real IDs and text come from the import."
+}

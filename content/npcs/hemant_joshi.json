@@ -1,0 +1,20 @@
+{
+  "id": "hemant_joshi",
+  "name": "Hemant Joshi",
+  "archetype": "staller",
+  "contacts": [
+    "ramesh_deshpande"
+  ],
+  "traits": {
+    "C": 65,
+    "N": 70,
+    "E": 30,
+    "A": 60,
+    "trust": 55,
+    "comprehension": 55,
+    "liberty": 40,
+    "cautiousness": 70,
+    "shame_proneness": 70
+  },
+  "soul_sheet": "docs/02_soul_sheets.md"
+}

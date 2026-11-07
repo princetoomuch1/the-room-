@@ -1,0 +1,39 @@
+{
+  "base": "room1_kitchen.medium",
+  "mode": "hard",
+  "overlay_rules": "Patches replace fields on named nodes. add_nodes inserts new nodes. Tell windows not listed default to 1.",
+  "npc_trait_overrides": { "hemant_joshi": { "N": 85, "shame_proneness": 80 } },
+  "tell_window_default": 1,
+  "hidden_objection_layers_add": [
+    { "id": "son_fee", "after": "overdraft", "text": "If you default, his son Rohit's engineering fee is at risk, and he can't bring himself to say he is choosing between you.", "reveal": { "move_types": ["probe", "silence"], "trust_min": 55 } }
+  ],
+  "clean_requires": ["call:delay"],
+  "second_delayed_cost": { "on": ["partial", "dark", "loss"], "fires_in": "room3_table", "event": "rohit_stops_replying", "text": "Your cousin Rohit has stopped answering your messages." },
+  "patch_nodes": {
+    "k2": {
+      "line": "Haan, the form. See, first you help me with the shop GST return, it's due also. Then we sit with the form. After this week.",
+      "tells": [
+        { "id": "t_after_week", "anchor": "phrase:After this week.", "indexes": "delay", "tactic": "delay", "window": 1, "insight_cost": 1, "reading": "Third 'after this week'. A stall with no reason attached.", "false_positive": "Real caution. Guarantor papers are serious." },
+        { "id": "t_counter_request", "anchor": "phrase:first you help me with the shop GST return", "indexes": "counter_request", "tactic": "reciprocity_trap", "window": 1, "insight_cost": 1, "reading": "Surprise tactic: a counter-ask to delay the real ask.", "false_positive": "He really does need help with GST. He's bad at it." }
+      ],
+      "choices_add": [
+        { "id": "k2_call_delay", "requires_tell": "t_after_week", "text": "Mama, you've said 'after this week' three times. What's actually worrying you?", "type": "call", "calls_tactic": "delay", "truthful": true, "preserves_refusal": true, "targets": "hidden", "next": "k4" },
+        { "id": "k2_gst_help", "text": "I'll help with the GST. Sunday. And the form's separate, okay?", "type": "boundary", "truthful": true, "preserves_refusal": true, "reciprocity": true, "next": "k4" }
+      ]
+    },
+    "k4": {
+      "line_by_state": [
+        { "if": "revealed:overdraft && trust>=55", "line": "[He sits.] Minus since Diwali. And Rohit's fees, second year, BE, I have kept the FD for that. If I sign, and something happens, God forbid, then what do I tell him. Hemu, you fool. I couldn't say it. How do you say that to your sister's child.", "reveals": "son_fee" },
+        { "if": "trust>=40", "line": "[Long pause.] Statements. The current account is in minus. Since Diwali. Your Aai doesn't know.", "reveals": "overdraft" },
+        { "else": true, "line": "Nothing. Leave it with me." }
+      ],
+      "choices_add": [
+        { "id": "k4_son", "condition": "revealed:son_fee", "text": "Then don't use Rohit's FD. The scheme also takes a co-guarantor at half liability. Baba could take the other half. You'd be at twenty thousand, not forty. I'd rather that than you choosing.", "type": "self_interest", "truthful": true, "preserves_refusal": true, "targets": "hidden", "reciprocity": true, "next": "k6" }
+      ]
+    },
+    "k6": {
+      "line": "Half. [He breathes out.] Your Baba will grumble. Let him grumble. Saturday. Good shirt."
+    }
+  },
+  "debrief_add": { "tells": ["t_counter_request"], "hidden_objection": "son_fee" }
+}
